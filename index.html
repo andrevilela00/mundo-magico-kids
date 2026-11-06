@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#7046cc">
+<title>Mundo Mágico Kids</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial;background:#f7f2ff;color:#322451}
+header{background:#7046cc;color:white;padding:22px;text-align:center}
+header h1{margin:0;font-size:27px}
+header p{margin:5px 0}
+main{max-width:650px;margin:auto;padding:18px}
+.card{background:white;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 4px 15px #43236c15}
+button,select{font:inherit;border:0;border-radius:15px;padding:15px;cursor:pointer}
+button{background:#7046cc;color:white;font-weight:700}
+button:disabled{opacity:.5}
+.choice{display:block;width:100%;margin:10px 0;background:#eee4ff;color:#40236d}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{min-height:125px;font-size:19px}
+.tile span{display:block;font-size:42px}
+.yellow{background:#ffcb62;color:#503400}
+.blue{background:#9cdefd;color:#19466a}
+.green{background:#b7edbf;color:#205c2e}
+.pink{background:#ffc4dc;color:#7e3154}
+.hidden{display:none}
+.center{text-align:center}
+.emoji{font-size:72px;text-align:center}
+#message{font-weight:700;text-align:center}
+footer{text-align:center;font-size:12px;color:#777;padding:20px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌈 Mundo Mágico Kids</h1>
+<p id="subtitle">Brincar, descobrir e aprender!</p>
+</header>
+<main>
+<section id="home" class="card">
+<h2 id="welcome">Olá, pequeno explorador! 🦊</h2>
+<label>🌍 Idioma / Language</label>
+<select id="lang" onchange="changeLanguage()">
+<option value="pt-PT">🇵🇹 Português</option>
+<option value="en-GB">🇬🇧 English</option>
+</select>
+<p id="intro">Escolhe uma aventura:</p>
+<div class="tiles">
+<button class="tile blue" onclick="openGame()"><span>🎨</span><b id="games">Jogos</b></button>
+<button class="tile yellow" onclick="openStory()"><span>🦊</span><b id="stories">Histórias</b></button>
+<button class="tile green" onclick="showSoon()"><span>🔢</span><b id="learn">Aprender</b></button>
+<button class="tile pink" onclick="showSoon()"><span>🖍️</span><b id="create">Criar</b></button>
+</div>
+<p class="center">⭐ <span id="total">0</span></p>
+</section>
+
+<section id="activity" class="card hidden">
+<button onclick="goHome()">⌂ Início / Home</button>
+<h2 id="activityTitle"></h2>
+<div class="emoji" id="picture"></div>
+<p id="content"></p>
+<button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
+<div id="choices"></div>
+<p id="message"></p>
+<button id="next" class="hidden" onclick="advance()">➡️ Continuar / Continue</button>
+</section>
+</main>
+<footer>Versão de testes 0.5 · Sem publicidade</footer>
+<script>
+const $=id=>document.getElementById(id);
+let lang=localStorage.getItem("mmk_lang")||"pt-PT";
+let points=Number(localStorage.getItem("mmk_points")||0);
+let mode="",step=0,selected=false,currentSpeech="";
+const texts={
+"pt-PT":{
+subtitle:"Brincar, descobrir e aprender!",
+welcome:"Olá, pequeno explorador! 🦊",
+intro:"Escolhe uma aventura:",
+games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
+correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
+done:"Parabéns! Terminaste a atividade!",
+soon:"Esta atividade estará disponível em breve."
+},
+"en-GB":{
+subtitle:"Play, discover and learn!",
+welcome:"Hello, little explorer! 🦊",
+intro:"Choose an adventure:",
+games:"Games",stories:"Stories",learn:"Learn",create:"Create",
+correct:"Well done! ⭐",retry:"Good try! 💛",
+done:"Congratulations! You finished!",
+soon:"This activity is coming soon."
+}};
+const questions=[
+{pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
+{pt:"Quantas estrelas estão aqui?",en:"How many stars are here?",pic:"⭐⭐⭐",a:["1","2","3"],correct:2},
+{pt:"Qual destes animais é um gato?",en:"Which animal is a cat?",pic:"🐾",a:["🐶","🐱","🐰"],correct:1},
+{pt:"Qual é a cor da relva?",en:"What colour is grass?",pic:"🌱",a:["🟢","🟣","🟠"],correct:0}
+];
+const story=[
+{pt:"A Lili encontrou um pequeno veado perdido na floresta. O que deve fazer?",en:"Lili found a little deer lost in the forest. What should she do?",pic:"🦊🦌",aPT:["Ajudar o veado","Ignorar o veado"],aEN:["Help the deer","Ignore the deer"],correct:0},
+{pt:"A floresta é muito grande. A coruja Olívia conhece os caminhos. O que devem fazer?",en:"The forest is very big. Olivia the owl knows the paths. What should they do?",pic:"🦉🌳",aPT:["Pedir ajuda à Olívia","Ir por um caminho desconhecido"],aEN:["Ask Olivia for help","Take an unknown path"],correct:0},
+{pt:"A Lili e a Olívia encontraram a família do veado! Todos ficaram felizes.",en:"Lili and Olivia found the deer's family! Everyone was happy.",pic:"🦊🦌💛",aPT:["Celebrar a amizade"],aEN:["Celebrate friendship"],correct:0}
+];
+function t(key){return texts[lang][key]}
+function changeLanguage(){
+lang=$("lang").value;
+localStorage.setItem("mmk_lang",lang);
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create"])
+$(id).textContent=t(id);
+if(mode)render();
+}
+function say(str){
+if(!("speechSynthesis" in window)){
+alert("Narração não disponível neste navegador.");
+return;
+}
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(str);
+u.lang=lang;u.rate=.88;u.pitch=1.05;
+const voices=speechSynthesis.getVoices();
+const voice=voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase());
+if(voice)u.voice=voice;
+speechSynthesis.speak(u);
+}
+function speakCurrent(){say(currentSpeech)}
+function goHome(){
+if("speechSynthesis" in window)speechSynthesis.cancel();
+mode="";
+$("home").classList.remove("hidden");
+$("activity").classList.add("hidden");
+$("total").textContent=points;
+}
+function openGame(){start("game")}
+function openStory(){start("story")}
+function start(m){
+mode=m;step=0;selected=false;
+$("home").classList.add("hidden");
+$("activity").classList.remove("hidden");
+render();
+}
+function render(){
+selected=false;
+$("next").classList.add("hidden");
+$("message").textContent="";
+const data=mode==="game"?questions:story;
+if(step>=data.length){
+$("activityTitle").textContent="🏆";
+$("picture").textContent="🎉";
+$("content").textContent=t("done");
+$("choices").innerHTML="";
+currentSpeech=t("done");
+say(currentSpeech);
+return;
+}
+const q=data[step];
+$("activityTitle").textContent=mode==="game"?t("games"):t("stories");
+$("picture").textContent=q.pic;
+$("content").textContent=lang==="pt-PT"?q.pt:q.en;
+currentSpeech=$("content").textContent;
+const answers=mode==="game"?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
+$("choices").innerHTML="";
+answers.forEach((value,i)=>{
+const b=document.createElement("button");
+b.className="choice";b.textContent=value;
+b.onclick=()=>choose(i,answers);
+$("choices").appendChild(b);
+});
+}
+function choose(i,answers){
+if(selected)return;
+selected=true;
+const q=(mode==="game"?questions:story)[step];
+const correct=i===q.correct;
+$("message").textContent=correct?t("correct"):t("retry");
+if(correct){
+points++;
+localStorage.setItem("mmk_points",points);
+}
+const spokenAnswer=answers[i].replace(/[\u{1F300}-\u{1FAFF}]/gu,"");
+say((spokenAnswer.trim()?spokenAnswer+". ":"")+$("message").textContent);
+$("next").classList.remove("hidden");
+}
+function advance(){
+step++;render();
+}
+function showSoon(){alert(t("soon"))}
+$("lang").value=lang;
+$("total").textContent=points;
+changeLanguage();
+</script>
+</body>
+</html>
