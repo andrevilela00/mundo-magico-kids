@@ -25,6 +25,14 @@ button:disabled{opacity:.5}
 .green{background:#b7edbf;color:#205c2e}
 .pink{background:#ffc4dc;color:#7e3154}
 .hidden{display:none}
+#miniBoard{display:grid;gap:10px;margin:15px 0;grid-template-columns:repeat(4,minmax(0,1fr))}
+.memory-card{min-width:0;aspect-ratio:1;background:#7046cc;color:white;font-size:clamp(26px,8vw,52px);padding:3px;box-shadow:0 3px 0 #4d2a91}
+.memory-card.revealed{background:#f3eaff;color:#40236d}.memory-card.matched{background:#c8f1ce;color:#205c2e}
+#miniBoard.shapes-board{grid-template-columns:repeat(2,minmax(0,1fr))}
+.shape-choice{min-height:110px;background:#f4ecff;color:#40236d;font-size:55px;padding:8px;border:3px solid transparent}
+.shape-choice:active{transform:scale(.95)}
+#miniProgress,#miniFeedback{text-align:center;font-size:19px;font-weight:700;min-height:32px}
+
 .palette{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}.swatch{width:48px;height:48px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #aaa;padding:0}.swatch.active{outline:4px solid #7046cc;outline-offset:2px}
 #drawing{display:block;width:100%;height:auto;background:white;border:3px solid #d8c7f5;border-radius:16px;touch-action:none}
 .draw-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.draw-actions button{flex:1;font-size:15px}
@@ -69,7 +77,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <button class="tile green" onclick="openLearn()"><span>🔢</span><b id="learn">Aprender</b></button>
 <button class="tile pink" onclick="openCreate()"><span>🖍️</span><b id="create">Criar</b></button>
 </div>
-<p class="center">⭐ <span id="total">0</span></p>
+<h3 id="moreGamesTitle">🎲 Mais jogos</h3><div class="tiles"><button class="tile green" onclick="openMini('memory')"><span>🧠</span><b id="memoryLabel">Memória</b></button><button class="tile blue" onclick="openMini('shapes')"><span>🔷</span><b id="shapesLabel">Formas e cores</b></button></div><p class="center">⭐ <span id="total">0</span></p>
 <button class="choice" onclick="openSettings()">⚙️ <span id="settingsLabel">Definições dos pais</span></button>
 </section>
 
@@ -84,6 +92,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <p id="message"></p>
 <button id="next" class="hidden" onclick="advance()">➡️ Continuar / Continue</button>
 </section>
+<section id="mini" class="card hidden"><button onclick="goHome()">⌂ Início / Home</button><h2 id="miniTitle"></h2><p id="miniIntro"></p><label id="difficultyLabel" for="difficulty">Dificuldade</label><select id="difficulty" onchange="restartMini()" style="width:100%;background:#eee4ff;color:#40236d;margin:8px 0 16px"><option value="easy" id="easyLabel">Fácil</option><option value="medium" id="mediumLabel">Médio</option><option value="hard" id="hardLabel">Difícil</option></select><p id="miniProgress" aria-live="polite"></p><div id="miniBoard"></div><p id="miniFeedback" aria-live="polite"></p><button class="choice" id="miniRestart" onclick="restartMini()">🔄 Jogar novamente</button></section>
 <section id="creative" class="card hidden"><button onclick="goHome()">⌂ Início / Home</button><h2 id="drawTitle">🖍️ Desenhar</h2><p id="drawHint">Desenha com o dedo. Escolhe uma cor!</p><div id="palette" class="palette"></div><canvas id="drawing" width="600" height="440" aria-label="Área de desenho"></canvas><div class="draw-actions"><button id="clearDraw" onclick="clearDrawing()">🧽 Limpar</button><button id="saveDraw" onclick="saveDrawing()">💾 Guardar imagem</button></div></section>
 <section id="settings" class="card hidden">
 <button onclick="closeSettings()">⌂ Início / Home</button>
@@ -101,7 +110,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 0.8.0 · Sem publicidade</footer>
+<footer>Versão de testes 0.9.0 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -123,7 +132,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!",drawTitle:"🖍️ Vamos desenhar!",drawHint:"Escolhe uma cor e desenha com o dedo!",clearDraw:"🧽 Limpar",saveDraw:"💾 Guardar imagem",learnTitle:"🔢 Vamos contar!",learnQuestion:"Quantos animais consegues contar?"
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!",moreGamesTitle:"🎲 Mais jogos",memoryLabel:"Memória",shapesLabel:"Formas e cores",difficultyLabel:"Dificuldade",easyLabel:"Fácil",mediumLabel:"Médio",hardLabel:"Difícil",miniRestart:"🔄 Jogar novamente",memoryIntro:"Encontra os pares iguais!",shapesIntro:"Toca na forma com a cor pedida!",pairs:"Pares encontrados",attempts:"Tentativas",miniDone:"Fantástico! Conseguiste!",shapeCorrect:"Muito bem! Acertaste!",shapeWrong:"Boa tentativa! Experimenta outra vez.",shapePrompt:"Encontra",drawTitle:"🖍️ Vamos desenhar!",drawHint:"Escolhe uma cor e desenha com o dedo!",clearDraw:"🧽 Limpar",saveDraw:"💾 Guardar imagem",learnTitle:"🔢 Vamos contar!",learnQuestion:"Quantos animais consegues contar?"
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -132,7 +141,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!",drawTitle:"🖍️ Let’s draw!",drawHint:"Pick a colour and draw with your finger!",clearDraw:"🧽 Clear",saveDraw:"💾 Save picture",learnTitle:"🔢 Let’s count!",learnQuestion:"How many animals can you count?"
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!",moreGamesTitle:"🎲 More games",memoryLabel:"Memory",shapesLabel:"Shapes and colours",difficultyLabel:"Difficulty",easyLabel:"Easy",mediumLabel:"Medium",hardLabel:"Hard",miniRestart:"🔄 Play again",memoryIntro:"Find the matching pairs!",shapesIntro:"Tap the shape in the requested colour!",pairs:"Pairs found",attempts:"Attempts",miniDone:"Fantastic! You did it!",shapeCorrect:"Well done! Correct!",shapeWrong:"Good try! Have another go.",shapePrompt:"Find",drawTitle:"🖍️ Let’s draw!",drawHint:"Pick a colour and draw with your finger!",clearDraw:"🧽 Clear",saveDraw:"💾 Save picture",learnTitle:"🔢 Let’s count!",learnQuestion:"How many animals can you count?"
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -150,7 +159,7 @@ function changeLanguage(){
 lang=$("lang").value;
 deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel","drawTitle","drawHint","clearDraw","saveDraw"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel","drawTitle","drawHint","clearDraw","saveDraw","moreGamesTitle","memoryLabel","shapesLabel","difficultyLabel","easyLabel","mediumLabel","hardLabel","miniRestart"])
 $(id).textContent=t(id);
 if(mode)render();
 if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
@@ -218,7 +227,7 @@ if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{if(
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
-function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("voiceGender").value=voiceGender;updateVoiceAvailability();window.scrollTo(0,0)}
+function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("mini").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("voiceGender").value=voiceGender;updateVoiceAvailability();window.scrollTo(0,0)}
 function saveEffects(){effectsOn=$("effectsToggle").checked;localStorage.setItem("mmk_effects",String(effectsOn))}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
 function closeSettings(){$("settings").classList.add("hidden");goHome()}
@@ -229,6 +238,7 @@ $("settings").classList.add("hidden");
 $("home").classList.remove("hidden");
 $("activity").classList.add("hidden");
 $("creative").classList.add("hidden");
+$("mini").classList.add("hidden");
 $("total").textContent=points;
 }
 function playEffect(success){
@@ -259,6 +269,7 @@ function start(m){
 mode=m;step=0;selected=false;
 $("home").classList.add("hidden");
 $("creative").classList.add("hidden");
+$("mini").classList.add("hidden");
 $("activity").classList.remove("hidden");
 render();
 }
@@ -355,7 +366,7 @@ let drawingNow=false,drawColour="#7046cc";
 const colours=["#7046cc","#f44336","#ff9800","#ffdc35","#36b96a","#2196f3","#ef6cba","#202020","#ffffff"];
 function initDrawing(){ctx.fillStyle="#ffffff";ctx.fillRect(0,0,drawing.width,drawing.height);ctx.lineWidth=9;ctx.lineCap="round";ctx.lineJoin="round"}
 function makePalette(){const p=$("palette");p.replaceChildren();colours.forEach(c=>{const b=document.createElement("button");b.type="button";b.className="swatch"+(c===drawColour?" active":"");b.style.background=c;b.setAttribute("aria-label",c);b.onclick=()=>{drawColour=c;makePalette()};p.appendChild(b)})}
-function openCreate(){stopVoice();mode="";$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.add("hidden");$("creative").classList.remove("hidden");makePalette();window.scrollTo(0,0)}
+function openCreate(){stopVoice();mode="";$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.add("hidden");$("mini").classList.add("hidden");$("creative").classList.remove("hidden");makePalette();window.scrollTo(0,0)}
 function drawPoint(e){const r=drawing.getBoundingClientRect();return{x:(e.clientX-r.left)*drawing.width/r.width,y:(e.clientY-r.top)*drawing.height/r.height}}
 drawing.addEventListener("pointerdown",e=>{e.preventDefault();drawingNow=true;drawing.setPointerCapture(e.pointerId);const p=drawPoint(e);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.fillStyle=drawColour;ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(p.x,p.y)});
 drawing.addEventListener("pointermove",e=>{if(!drawingNow)return;e.preventDefault();const p=drawPoint(e);ctx.strokeStyle=drawColour;ctx.lineTo(p.x,p.y);ctx.stroke()});
@@ -363,6 +374,22 @@ drawing.addEventListener("pointerup",()=>drawingNow=false);drawing.addEventListe
 function clearDrawing(){initDrawing()}
 function saveDrawing(){const a=document.createElement("a");a.download="mundo-magico-desenho.png";a.href=drawing.toDataURL("image/png");a.click()}
 initDrawing();
+let miniMode="",miniCards=[],miniOpen=[],miniMatched=0,miniAttempts=0,miniBusy=false,miniRound=0,miniTarget=null;
+const memorySymbols=["🐱","🦊","🐶","🐼","🦋","🐸","🐨","🐙","🦄","🐰","🐻","🐝"];
+const shapeSymbols=["●","■","▲","◆","★","♥"];
+const shapeColors=[{pt:"vermelho",en:"red",hex:"#ed4a4a"},{pt:"azul",en:"blue",hex:"#2589df"},{pt:"verde",en:"green",hex:"#24a769"},{pt:"amarelo",en:"yellow",hex:"#e6b700"},{pt:"roxo",en:"purple",hex:"#8854d0"}];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function openMini(kind){stopVoice();miniMode=kind;$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("settings").classList.add("hidden");$("mini").classList.remove("hidden");restartMini();window.scrollTo(0,0)}
+function restartMini(){miniRound++;miniOpen=[];miniMatched=0;miniAttempts=0;miniBusy=false;miniTarget=null;$("miniTitle").textContent=t(miniMode==="memory"?"memoryLabel":"shapesLabel");$("miniIntro").textContent=t(miniMode==="memory"?"memoryIntro":"shapesIntro");$("miniFeedback").textContent="";if(miniMode==="memory")setupMemory();else setupShapes()}
+function setupMemory(){const count={easy:3,medium:6,hard:8}[$("difficulty").value];miniCards=shuffle(memorySymbols.slice(0,count).flatMap((v,i)=>[{id:i,symbol:v,matched:false},{id:i,symbol:v,matched:false}]));$("miniBoard").className="";$("miniBoard").style.gridTemplateColumns=count===3?"repeat(3,minmax(0,1fr))":"repeat(4,minmax(0,1fr))";renderMemory()}
+function renderMemory(){const b=$("miniBoard");b.replaceChildren();miniCards.forEach((c,i)=>{const revealed=c.matched||miniOpen.includes(i);const el=document.createElement("button");el.className="memory-card"+(c.matched?" matched":revealed?" revealed":"");el.textContent=revealed?c.symbol:"❔";el.setAttribute("aria-label",revealed?c.symbol:(lang==="pt-PT"?"Carta virada":"Hidden card"));el.disabled=c.matched;el.onclick=()=>flipMemory(i);b.appendChild(el)});$("miniProgress").textContent=t("pairs")+": "+miniMatched+"/"+(miniCards.length/2)+" · "+t("attempts")+": "+miniAttempts}
+function flipMemory(i){if(miniBusy||miniCards[i].matched||miniOpen.includes(i))return;miniOpen.push(i);renderMemory();if(miniOpen.length!==2)return;miniAttempts++;const [a,b]=miniOpen;if(miniCards[a].id===miniCards[b].id){miniCards[a].matched=miniCards[b].matched=true;miniMatched++;miniOpen=[];playEffect(true);celebrate();if(miniMatched===miniCards.length/2){$("miniFeedback").textContent=t("miniDone");points+=3;localStorage.setItem("mmk_points",points)}renderMemory()}else{miniBusy=true;const round=miniRound;setTimeout(()=>{if(round!==miniRound||miniMode!=="memory")return;miniOpen=[];miniBusy=false;renderMemory()},950);renderMemory()}}
+function setupShapes(){miniRound=miniRound+1;miniMatched=0;$("miniBoard").className="shapes-board";$("miniBoard").style.gridTemplateColumns="";nextShape()}
+function nextShape(){const max={easy:4,medium:6,hard:8}[$("difficulty").value];if(miniMatched>=max){$("miniBoard").replaceChildren();$("miniFeedback").textContent=t("miniDone");$("miniProgress").textContent=max+"/"+max;points+=3;localStorage.setItem("mmk_points",points);celebrate();return}
+const level=$("difficulty").value;const symbolCount=level==="easy"?2:level==="medium"?3:4;const colorCount=level==="easy"?2:level==="medium"?3:4;const choices=[];for(let i=0;i<4;i++){choices.push({symbol:shapeSymbols[Math.floor(Math.random()*symbolCount)],color:shapeColors[Math.floor(Math.random()*colorCount)]})}
+const correctIndex=Math.floor(Math.random()*4);const chosen=choices[correctIndex];miniTarget={symbol:chosen.symbol,color:chosen.color,correctIndex};const name=({ "●":["círculo","circle"],"■":["quadrado","square"],"▲":["triângulo","triangle"],"◆":["losango","diamond"],"★":["estrela","star"],"♥":["coração","heart"]})[chosen.symbol][lang==="pt-PT"?0:1];$("miniIntro").textContent=t("shapePrompt")+" "+(lang==="pt-PT"?"o ":"the ")+name+" "+(lang==="pt-PT"?"de cor ":"in ")+(lang==="pt-PT"?chosen.color.pt:chosen.color.en)+"!";$("miniProgress").textContent=(miniMatched+1)+"/"+max;$("miniFeedback").textContent="";
+const board=$("miniBoard");board.replaceChildren();choices.forEach((c,i)=>{const el=document.createElement("button");el.className="shape-choice";el.textContent=c.symbol;el.style.color=c.color.hex;el.setAttribute("aria-label",c.symbol+" "+(lang==="pt-PT"?c.color.pt:c.color.en));el.onclick=()=>answerShape(i);board.appendChild(el)})}
+function answerShape(i){if(!miniTarget)return;const chosen=miniTarget;const b=$("miniBoard").children[i];if(i!==chosen.correctIndex){$("miniFeedback").textContent=t("shapeWrong");b.style.borderColor="#ed4a4a";playEffect(false);return}miniTarget=null;miniMatched++;$("miniFeedback").textContent=t("shapeCorrect");playEffect(true);celebrate();const round=miniRound;setTimeout(()=>{if(round===miniRound&&miniMode==="shapes")nextShape()},650)}
 function showSoon(){alert(t("soon"))}
 $("lang").value=lang;
 $("total").textContent=points;
