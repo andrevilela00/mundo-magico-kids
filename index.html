@@ -76,7 +76,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
-<footer>Versão de testes 0.6.2 · Sem publicidade</footer>
+<footer>Versão de testes 0.6.3 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -128,11 +128,15 @@ alert("Narração não disponível neste navegador.");
 return;
 }
 speechSynthesis.cancel();
-const u=new SpeechSynthesisUtterance(str);
-u.lang=lang;u.rate=.95;u.pitch=1.12;
+// Never speak reward symbols or emoji names; keep the visual rewards on screen.
+const spoken=String(str).replace(/[⭐🌟✨🏆🎉🎊💛❤️🦊🦌🦉🌳🌈🔊✓]/gu,"").replace(/[\u{1F300}-\u{1FAFF}]/gu,"").replace(/\s+/g," ").trim();
+if(!spoken)return;
+const u=new SpeechSynthesisUtterance(spoken);
+u.lang=lang;u.rate=1.04;u.pitch=1.06;
 const voices=speechSynthesis.getVoices();
-const voice=voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase());
-if(voice)u.voice=voice;
+const same=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
+const preferred=same.find(v=>/premium|enhanced|natural/i.test(v.name))||same.find(v=>/siri/i.test(v.name))||same.find(v=>!v.name.toLowerCase().includes("compact"))||same[0];
+if(preferred)u.voice=preferred;
 speechSynthesis.speak(u);
 }
 function speakCurrent(){say(currentSpeech)}
@@ -214,8 +218,8 @@ localStorage.setItem("mmk_points",points);
 const labels=mode==="game"?[["vermelho","amarelo","azul"],["um","dois","três"],["cão","gato","coelho"],["verde","roxo","laranja"]]:null;
 const englishLabels=mode==="game"?[["red","yellow","blue"],["one","two","three"],["dog","cat","rabbit"],["green","purple","orange"]]:null;
 const correctAnswer=mode==="game"?(lang==="pt-PT"?labels[step][q.correct]:englishLabels[step][q.correct]):answers[q.correct];
-const goodPT=["Uau! Acertaste! O sol é amarelo. Brilhas como uma estrela!","Muito bem! São três estrelas. Contaste lindamente!","Isso mesmo! Encontraste o gatinho! Miau!","Fantástico! A relva é verde. Que grande explorador!"];
-const badPT=["Boa tentativa! O sol é amarelo, como um limão! Vamos descobrir mais?","Quase! Vamos contar juntos: uma, duas, três! São três estrelas.","Boa tentativa! O gatinho faz miau! Está aqui, olha!","Estiveste muito bem a tentar! A relva é verde. Vamos continuar?"];
+const goodPT=["Uau! Acertaste! O sol é amarelo! Que descoberta fantástica!","Muito bem! Contaste as três! Fantástico!","Isso mesmo! Encontraste o gatinho! Miau!","Fantástico! A relva é verde. Que grande explorador!"];
+const badPT=["Boa tentativa! O sol é amarelo, como um limão! Vamos descobrir mais?","Quase! Vamos contar juntos: uma... duas... três! Muito bem, continuamos?","Boa tentativa! O gatinho faz miau! Está aqui, olha!","Estiveste muito bem a tentar! A relva é verde. Vamos continuar?"];
 const goodEN=["Wow! You got it! The sun is yellow. You're shining bright!","Well done! Three stars! Lovely counting!","That's right! You found the little cat! Meow!","Fantastic! Grass is green. What a brilliant explorer!"];
 const badEN=["Good try! The sun is yellow, like a lemon! Let's discover more!","Nearly! Let's count together: one, two, three! Three stars.","Good try! The little cat says meow! There it is!","Great effort! Grass is green. Shall we carry on?"];
 const goodStoryPT=["Que gesto tão bonito! A Lili vai ajudar o seu novo amigo.","Boa ideia! Pedir ajuda a alguém de confiança é importante.","Que alegria! A amizade torna tudo mais especial!"];
