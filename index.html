@@ -17,6 +17,7 @@ button,select{font:inherit;border:0;border-radius:15px;padding:15px;cursor:point
 button{background:#7046cc;color:white;font-weight:700}
 button:disabled{opacity:.5}
 .choice{display:block;width:100%;margin:10px 0;background:#eee4ff;color:#40236d}
+.answer-row{display:flex;align-items:stretch;gap:8px;margin:10px 0}.answer-row .choice{flex:1;margin:0;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;font-size:20px;min-height:72px}.answer-icon{font-size:34px;flex-shrink:0}.answer-read{width:64px;min-width:64px;padding:10px;background:#ffcb62;color:#40236d;font-size:26px}.answer-row .choice:disabled{opacity:1}.answer-row .answer-read:disabled{opacity:1}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tile{min-height:125px;font-size:19px}
 .tile span{display:block;font-size:42px}
@@ -88,7 +89,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <div class="emoji" id="picture"></div>
 <p id="content"></p>
 <button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
-<div id="choices"></div>
+<button id="readAnswers" class="choice" onclick="readAllAnswers()">🔊 Ouvir as respostas</button><div id="choices"></div>
 <p id="message"></p>
 <button id="next" class="hidden" onclick="advance()">➡️ Continuar / Continue</button>
 </section>
@@ -110,7 +111,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 0.9.0 · Sem publicidade</footer>
+<footer>Versão de testes 0.9.1 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -143,6 +144,11 @@ correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
 soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!",moreGamesTitle:"🎲 More games",memoryLabel:"Memory",shapesLabel:"Shapes and colours",difficultyLabel:"Difficulty",easyLabel:"Easy",mediumLabel:"Medium",hardLabel:"Hard",miniRestart:"🔄 Play again",memoryIntro:"Find the matching pairs!",shapesIntro:"Tap the shape in the requested colour!",pairs:"Pairs found",attempts:"Attempts",miniDone:"Fantastic! You did it!",shapeCorrect:"Well done! Correct!",shapeWrong:"Good try! Have another go.",shapePrompt:"Find",drawTitle:"🖍️ Let’s draw!",drawHint:"Pick a colour and draw with your finger!",clearDraw:"🧽 Clear",saveDraw:"💾 Save picture",learnTitle:"🔢 Let’s count!",learnQuestion:"How many animals can you count?"
 }};
+const answerIcons={game:[["🔴","🟡","🔵"],["⭐","⭐⭐","⭐⭐⭐"],["🐶","🐱","🐰"],["🟢","🟣","🟠"]],learn:[["🐱","🐱🐱","🐱🐱🐱"],["🍎🍎","🍎🍎🍎","🍎🍎🍎🍎"],["🦋🦋🦋","🦋🦋🦋🦋","🦋🦋🦋🦋🦋"],["🐶🐶🐶🐶","🐶🐶🐶🐶🐶","🐶🐶🐶🐶🐶🐶"]],story:[["🤝🦌","🚶‍♀️"],["🦉💬","🌲❓"],["🎉💛"]]};
+const answerWords={game:{pt:[["vermelho","amarelo","azul"],["uma estrela","duas estrelas","três estrelas"],["cão","gato","coelho"],["verde","roxo","laranja"]],en:[["red","yellow","blue"],["one star","two stars","three stars"],["dog","cat","rabbit"],["green","purple","orange"]]}};
+function answerSpoken(q,i,answers){if(mode==="game")return answerWords.game[lang==="pt-PT"?"pt":"en"][step][i];if(mode==="learn")return String(answers[i]);return String(answers[i])}
+function readAnswer(i){const q=(mode==="game"?questions:mode==="learn"?learnQuestions:story)[step];const a=(mode==="game"||mode==="learn")?q.a:(lang==="pt-PT"?q.aPT:q.aEN);say(answerSpoken(q,i,a),null)}
+function readAllAnswers(){const q=(mode==="game"?questions:mode==="learn"?learnQuestions:story)[step];if(!q)return;const a=(mode==="game"||mode==="learn")?q.a:(lang==="pt-PT"?q.aPT:q.aEN);say(a.map((_,i)=>(i+1)+". "+answerSpoken(q,i,a)).join(". "),null)}
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
 {pt:"Quantas estrelas estão aqui?",en:"How many stars are here?",pic:"⭐⭐⭐",a:["1","2","3"],correct:2},
@@ -284,7 +290,7 @@ if(step>=data.length){$("progress").textContent="";
 $("activityTitle").textContent="🏆";
 $("picture").textContent="🎉";
 $("content").textContent=t("done");
-$("choices").innerHTML="";
+$("choices").innerHTML="";$("readAnswers").classList.add("hidden");
 currentSpeech=t("done");currentClip=mode+"-end";
 autoSpeak();
 return;
@@ -311,12 +317,16 @@ currentSpeech=introductions[step];currentClip="game-"+step+"-question";
 currentSpeech=(lang==="pt-PT"?"Está na hora da história! ":"Story time! ")+currentSpeech;currentClip="story-"+step+"-question";
 }
 const answers=(mode==="game"||mode==="learn")?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
-$("choices").innerHTML="";
+$("readAnswers").classList.remove("hidden");$("readAnswers").textContent=lang==="pt-PT"?"🔊 Ouvir as respostas":"🔊 Listen to the answers";
+$("choices").replaceChildren();
 answers.forEach((value,i)=>{
-const b=document.createElement("button");
-b.className="choice";b.textContent=value;
-b.onclick=()=>choose(i,answers);
-$("choices").appendChild(b);
+const row=document.createElement("div");row.className="answer-row";
+const b=document.createElement("button");b.className="choice";
+const symbol=document.createElement("span");symbol.className="answer-icon";symbol.textContent=answerIcons[mode][step][i];symbol.setAttribute("aria-hidden","true");
+const label=document.createElement("span");label.textContent=value;b.append(symbol,label);
+b.setAttribute("aria-label",answerSpoken(q,i,answers));b.onclick=()=>choose(i,answers);
+const listen=document.createElement("button");listen.className="answer-read";listen.textContent="🔊";listen.setAttribute("aria-label",(lang==="pt-PT"?"Ouvir resposta: ":"Hear answer: ")+answerSpoken(q,i,answers));listen.onclick=()=>readAnswer(i);
+row.append(b,listen);$("choices").appendChild(row);
 });
 autoSpeak();
 }
@@ -344,7 +354,7 @@ const goodStoryEN=["How kind! Lili is going to help her new friend.","Great idea
 const badStoryEN=["Let's try a kinder choice! When someone is lost, we should find safe help.","It's safer to ask someone we trust, like Olivia.","Let's celebrate friendship together!"];
 const feedback=mode==="learn"?(correct?(lang==="pt-PT"?"Muito bem! Contaste corretamente!":"Great counting! You got it!"):(lang==="pt-PT"?"Boa tentativa! Conta os animais com calma e experimenta outra vez na próxima!":"Good try! Count carefully and keep practising!")):mode==="game"?(lang==="pt-PT"?(correct?goodPT:badPT):(correct?goodEN:badEN))[step]:(lang==="pt-PT"?(correct?goodStoryPT:badStoryPT):(correct?goodStoryEN:badStoryEN))[step];
 $("message").textContent=feedback;
-[...$("choices").children].forEach((b,j)=>{b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
+[...$("choices").children].forEach((row,j)=>{const b=row.querySelector(".choice");b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.querySelector("span:last-child").textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
 playEffect(correct);
 currentSpeech=$("message").textContent;
 currentClip=mode+"-"+step+"-"+(correct?"correct":"incorrect");
