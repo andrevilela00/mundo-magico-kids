@@ -10,7 +10,7 @@
 body{margin:0;font-family:system-ui,Arial;background:#f7f2ff;color:#322451}
 header{background:#7046cc;color:white;padding:22px;text-align:center}
 header h1{margin:0;font-size:27px}
-header p{margin:5px 0}
+header p{margin:5px 0} .parent-entry{background:#ffcb62;color:#4a2a75;padding:11px 16px;margin-top:12px;font-size:15px} .choice:disabled{opacity:1} .card{animation:appear .22s ease-out} @keyframes appear{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 main{max-width:650px;margin:auto;padding:18px}
 .card{background:white;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 4px 15px #43236c15}
 button,select{font:inherit;border:0;border-radius:15px;padding:15px;cursor:pointer}
@@ -35,6 +35,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <header>
 <h1>🌈 Mundo Mágico Kids</h1>
 <p id="subtitle">Brincar, descobrir e aprender!</p>
+<button class="parent-entry" onclick="openSettings()">🔒 <span id="headerParents">Área dos pais</span></button>
 </header>
 <main>
 <section id="home" class="card">
@@ -74,13 +75,14 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
-<footer>Versão de testes 0.6 · Sem publicidade</footer>
+<footer>Versão de testes 0.6.1 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
 let points=Number(localStorage.getItem("mmk_points")||0);
 let mode="",step=0,selected=false,currentSpeech="";
 let autoNarration=localStorage.getItem("mmk_auto")!=="false";
+let speechTurn=0;
 const texts={
 "pt-PT":{
 subtitle:"Brincar, descobrir e aprender!",
@@ -89,7 +91,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: "
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -98,7 +100,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",saveLabel:"Save and return",answerIs:"The correct answer is: "
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -115,7 +117,7 @@ function t(key){return texts[lang][key]}
 function changeLanguage(){
 lang=$("lang").value;
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","settingsLabel","parentTitle","parentNotice","autoLabel","autoHelp","saveLabel"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","autoHelp","saveLabel"])
 $(id).textContent=t(id);
 if(mode)render();
 }
@@ -126,7 +128,7 @@ return;
 }
 speechSynthesis.cancel();
 const u=new SpeechSynthesisUtterance(str);
-u.lang=lang;u.rate=.88;u.pitch=1.05;
+u.lang=lang;u.rate=.95;u.pitch=1.12;
 const voices=speechSynthesis.getVoices();
 const voice=voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase());
 if(voice)u.voice=voice;
@@ -134,7 +136,7 @@ speechSynthesis.speak(u);
 }
 function speakCurrent(){say(currentSpeech)}
 function autoSpeak(){if(autoNarration)say(currentSpeech)}
-function openSettings(){if("speechSynthesis" in window)speechSynthesis.cancel();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration}
+function openSettings(){if("speechSynthesis" in window)speechSynthesis.cancel();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;window.scrollTo(0,0)}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
 function closeSettings(){$("settings").classList.add("hidden");goHome()}
 function goHome(){
@@ -172,6 +174,22 @@ $("activityTitle").textContent=mode==="game"?t("games"):t("stories");
 $("picture").textContent=q.pic;
 $("content").textContent=lang==="pt-PT"?q.pt:q.en;
 currentSpeech=$("content").textContent;
+if(mode==="game"){
+const introductions=lang==="pt-PT"?[
+"Olá! Vamos descobrir as cores! Olha para o sol. De que cor é?",
+"Preparado para contar? Olha com atenção para as estrelas. Quantas consegues ver?",
+"Vamos conhecer os animais! Consegues descobrir onde está o gatinho?",
+"Mais uma descoberta! A relva do jardim tem uma cor muito bonita. Qual será?"
+]:[
+"Hello, little explorer! Let's discover colours! Look at the sun. What colour is it?",
+"Ready to count? Look carefully at the stars. How many can you see?",
+"Let's meet some animals! Can you spot the little cat?",
+"One more discovery! The grass in the garden has a lovely colour. What is it?"
+];
+currentSpeech=introductions[step];
+}else{
+currentSpeech=(lang==="pt-PT"?"Está na hora da história! ":"Story time! ")+currentSpeech;
+}
 const answers=mode==="game"?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
 $("choices").innerHTML="";
 answers.forEach((value,i)=>{
@@ -195,10 +213,19 @@ localStorage.setItem("mmk_points",points);
 const labels=mode==="game"?[["vermelho","amarelo","azul"],["um","dois","três"],["cão","gato","coelho"],["verde","roxo","laranja"]]:null;
 const englishLabels=mode==="game"?[["red","yellow","blue"],["one","two","three"],["dog","cat","rabbit"],["green","purple","orange"]]:null;
 const correctAnswer=mode==="game"?(lang==="pt-PT"?labels[step][q.correct]:englishLabels[step][q.correct]):answers[q.correct];
-const explanation=correct?"":t("answerIs")+correctAnswer+".";
-$("message").textContent=t(correct?"correct":"retry")+(explanation?" "+explanation:"");
+const goodPT=["Uau! Acertaste! O sol é amarelo. Brilhas como uma estrela!","Muito bem! São três estrelas. Contaste lindamente!","Isso mesmo! Encontraste o gatinho! Miau!","Fantástico! A relva é verde. Que grande explorador!"];
+const badPT=["Boa tentativa! O sol é amarelo, como um limão! Vamos descobrir mais?","Quase! Vamos contar juntos: uma, duas, três! São três estrelas.","Boa tentativa! O gatinho faz miau! Está aqui, olha!","Estiveste muito bem a tentar! A relva é verde. Vamos continuar?"];
+const goodEN=["Wow! You got it! The sun is yellow. You're shining bright!","Well done! Three stars! Lovely counting!","That's right! You found the little cat! Meow!","Fantastic! Grass is green. What a brilliant explorer!"];
+const badEN=["Good try! The sun is yellow, like a lemon! Let's discover more!","Nearly! Let's count together: one, two, three! Three stars.","Good try! The little cat says meow! There it is!","Great effort! Grass is green. Shall we carry on?"];
+const goodStoryPT=["Que gesto tão bonito! A Lili vai ajudar o seu novo amigo.","Boa ideia! Pedir ajuda a alguém de confiança é importante.","Que alegria! A amizade torna tudo mais especial!"];
+const badStoryPT=["Podemos fazer melhor! Quando alguém está perdido, devemos procurar ajudar com segurança.","É mais seguro pedir ajuda a alguém de confiança, como a Olívia.","Vamos celebrar juntos a amizade!"];
+const goodStoryEN=["How kind! Lili is going to help her new friend.","Great idea! Asking someone you trust for help is important.","Hooray! Friendship makes everything more special!"];
+const badStoryEN=["Let's try a kinder choice! When someone is lost, we should find safe help.","It's safer to ask someone we trust, like Olivia.","Let's celebrate friendship together!"];
+const feedback=mode==="game"?(lang==="pt-PT"?(correct?goodPT:badPT):(correct?goodEN:badEN))[step]:(lang==="pt-PT"?(correct?goodStoryPT:badStoryPT):(correct?goodStoryEN:badStoryEN))[step];
+$("message").textContent=feedback;
 [...$("choices").children].forEach((b,j)=>{b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
-say($("message").textContent);
+currentSpeech=$("message").textContent;
+say(currentSpeech);
 $("next").classList.remove("hidden");
 }
 function advance(){
