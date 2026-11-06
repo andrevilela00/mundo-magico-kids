@@ -52,6 +52,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <button class="tile pink" onclick="showSoon()"><span>🖍️</span><b id="create">Criar</b></button>
 </div>
 <p class="center">⭐ <span id="total">0</span></p>
+<button class="choice" onclick="openSettings()">⚙️ <span id="settingsLabel">Definições dos pais</span></button>
 </section>
 
 <section id="activity" class="card hidden">
@@ -64,13 +65,22 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <p id="message"></p>
 <button id="next" class="hidden" onclick="advance()">➡️ Continuar / Continue</button>
 </section>
+<section id="settings" class="card hidden">
+<button onclick="closeSettings()">⌂ Início / Home</button>
+<h2 id="parentTitle">⚙️ Definições dos pais</h2>
+<p id="parentNotice">Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.</p>
+<label><input type="checkbox" id="autoNarration" onchange="saveNarration()"> <span id="autoLabel">Narração automática</span></label>
+<p id="autoHelp">Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.</p>
+<button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
+</section>
 </main>
-<footer>Versão de testes 0.5 · Sem publicidade</footer>
+<footer>Versão de testes 0.6 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
 let points=Number(localStorage.getItem("mmk_points")||0);
 let mode="",step=0,selected=false,currentSpeech="";
+let autoNarration=localStorage.getItem("mmk_auto")!=="false";
 const texts={
 "pt-PT":{
 subtitle:"Brincar, descobrir e aprender!",
@@ -79,7 +89,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve."
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: "
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -88,7 +98,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon."
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",saveLabel:"Save and return",answerIs:"The correct answer is: "
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -105,7 +115,7 @@ function t(key){return texts[lang][key]}
 function changeLanguage(){
 lang=$("lang").value;
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","settingsLabel","parentTitle","parentNotice","autoLabel","autoHelp","saveLabel"])
 $(id).textContent=t(id);
 if(mode)render();
 }
@@ -123,9 +133,14 @@ if(voice)u.voice=voice;
 speechSynthesis.speak(u);
 }
 function speakCurrent(){say(currentSpeech)}
+function autoSpeak(){if(autoNarration)say(currentSpeech)}
+function openSettings(){if("speechSynthesis" in window)speechSynthesis.cancel();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration}
+function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
+function closeSettings(){$("settings").classList.add("hidden");goHome()}
 function goHome(){
 if("speechSynthesis" in window)speechSynthesis.cancel();
 mode="";
+$("settings").classList.add("hidden");
 $("home").classList.remove("hidden");
 $("activity").classList.add("hidden");
 $("total").textContent=points;
@@ -149,7 +164,7 @@ $("picture").textContent="🎉";
 $("content").textContent=t("done");
 $("choices").innerHTML="";
 currentSpeech=t("done");
-say(currentSpeech);
+autoSpeak();
 return;
 }
 const q=data[step];
@@ -165,6 +180,7 @@ b.className="choice";b.textContent=value;
 b.onclick=()=>choose(i,answers);
 $("choices").appendChild(b);
 });
+autoSpeak();
 }
 function choose(i,answers){
 if(selected)return;
@@ -176,8 +192,13 @@ if(correct){
 points++;
 localStorage.setItem("mmk_points",points);
 }
-const spokenAnswer=answers[i].replace(/[\u{1F300}-\u{1FAFF}]/gu,"");
-say((spokenAnswer.trim()?spokenAnswer+". ":"")+$("message").textContent);
+const labels=mode==="game"?[["vermelho","amarelo","azul"],["um","dois","três"],["cão","gato","coelho"],["verde","roxo","laranja"]]:null;
+const englishLabels=mode==="game"?[["red","yellow","blue"],["one","two","three"],["dog","cat","rabbit"],["green","purple","orange"]]:null;
+const correctAnswer=mode==="game"?(lang==="pt-PT"?labels[step][q.correct]:englishLabels[step][q.correct]):answers[q.correct];
+const explanation=correct?"":t("answerIs")+correctAnswer+".";
+$("message").textContent=t(correct?"correct":"retry")+(explanation?" "+explanation:"");
+[...$("choices").children].forEach((b,j)=>{b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
+say($("message").textContent);
 $("next").classList.remove("hidden");
 }
 function advance(){
