@@ -25,6 +25,11 @@ button:disabled{opacity:.5}
 .green{background:#b7edbf;color:#205c2e}
 .pink{background:#ffc4dc;color:#7e3154}
 .hidden{display:none}
+.palette{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}.swatch{width:48px;height:48px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #aaa;padding:0}.swatch.active{outline:4px solid #7046cc;outline-offset:2px}
+#drawing{display:block;width:100%;height:auto;background:white;border:3px solid #d8c7f5;border-radius:16px;touch-action:none}
+.draw-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.draw-actions button{flex:1;font-size:15px}
+#content{font-size:22px;line-height:1.45;text-align:center}
+
 .center{text-align:center}
 .emoji{font-size:82px;text-align:center;min-height:115px;display:grid;place-items:center;animation:floaty 2.6s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
@@ -61,8 +66,8 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <div class="tiles">
 <button class="tile blue" onclick="openGame()"><span>🎨</span><b id="games">Jogos</b></button>
 <button class="tile yellow" onclick="openStory()"><span>🦊</span><b id="stories">Histórias</b></button>
-<button class="tile green" onclick="showSoon()"><span>🔢</span><b id="learn">Aprender</b></button>
-<button class="tile pink" onclick="showSoon()"><span>🖍️</span><b id="create">Criar</b></button>
+<button class="tile green" onclick="openLearn()"><span>🔢</span><b id="learn">Aprender</b></button>
+<button class="tile pink" onclick="openCreate()"><span>🖍️</span><b id="create">Criar</b></button>
 </div>
 <p class="center">⭐ <span id="total">0</span></p>
 <button class="choice" onclick="openSettings()">⚙️ <span id="settingsLabel">Definições dos pais</span></button>
@@ -79,6 +84,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <p id="message"></p>
 <button id="next" class="hidden" onclick="advance()">➡️ Continuar / Continue</button>
 </section>
+<section id="creative" class="card hidden"><button onclick="goHome()">⌂ Início / Home</button><h2 id="drawTitle">🖍️ Desenhar</h2><p id="drawHint">Desenha com o dedo. Escolhe uma cor!</p><div id="palette" class="palette"></div><canvas id="drawing" width="600" height="440" aria-label="Área de desenho"></canvas><div class="draw-actions"><button id="clearDraw" onclick="clearDrawing()">🧽 Limpar</button><button id="saveDraw" onclick="saveDrawing()">💾 Guardar imagem</button></div></section>
 <section id="settings" class="card hidden">
 <button onclick="closeSettings()">⌂ Início / Home</button>
 <h2 id="parentTitle">⚙️ Definições dos pais</h2>
@@ -95,7 +101,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 0.7.4 · Sem publicidade</footer>
+<footer>Versão de testes 0.8.0 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -117,7 +123,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!",drawTitle:"🖍️ Vamos desenhar!",drawHint:"Escolhe uma cor e desenha com o dedo!",clearDraw:"🧽 Limpar",saveDraw:"💾 Guardar imagem",learnTitle:"🔢 Vamos contar!",learnQuestion:"Quantos animais consegues contar?"
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -126,7 +132,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!",drawTitle:"🖍️ Let’s draw!",drawHint:"Pick a colour and draw with your finger!",clearDraw:"🧽 Clear",saveDraw:"💾 Save picture",learnTitle:"🔢 Let’s count!",learnQuestion:"How many animals can you count?"
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -144,7 +150,7 @@ function changeLanguage(){
 lang=$("lang").value;
 deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel","drawTitle","drawHint","clearDraw","saveDraw"])
 $(id).textContent=t(id);
 if(mode)render();
 if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
@@ -212,7 +218,7 @@ if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{if(
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
-function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("voiceGender").value=voiceGender;updateVoiceAvailability();window.scrollTo(0,0)}
+function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("voiceGender").value=voiceGender;updateVoiceAvailability();window.scrollTo(0,0)}
 function saveEffects(){effectsOn=$("effectsToggle").checked;localStorage.setItem("mmk_effects",String(effectsOn))}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
 function closeSettings(){$("settings").classList.add("hidden");goHome()}
@@ -222,6 +228,7 @@ mode="";
 $("settings").classList.add("hidden");
 $("home").classList.remove("hidden");
 $("activity").classList.add("hidden");
+$("creative").classList.add("hidden");
 $("total").textContent=points;
 }
 function playEffect(success){
@@ -251,6 +258,7 @@ function openStory(){start("story")}
 function start(m){
 mode=m;step=0;selected=false;
 $("home").classList.add("hidden");
+$("creative").classList.add("hidden");
 $("activity").classList.remove("hidden");
 render();
 }
@@ -259,7 +267,7 @@ selected=false;
 $("picture").classList.remove("correct-pop");
 $("next").classList.add("hidden");
 $("message").textContent="";
-const data=mode==="game"?questions:story;
+const data=mode==="game"?questions:mode==="learn"?learnQuestions:story;
 $("progress").textContent=(lang==="pt-PT"?"Aventura ":"Adventure ")+Math.min(step+1,data.length)+" / "+data.length;
 if(step>=data.length){$("progress").textContent="";
 $("activityTitle").textContent="🏆";
@@ -271,11 +279,11 @@ autoSpeak();
 return;
 }
 const q=data[step];
-$("activityTitle").textContent=mode==="game"?t("games"):t("stories");
+$("activityTitle").textContent=mode==="game"?t("games"):mode==="learn"?t("learnTitle"):t("stories");
 $("picture").textContent=q.pic;
 $("content").textContent=lang==="pt-PT"?q.pt:q.en;
 currentSpeech=$("content").textContent;
-if(mode==="game"){
+if(mode==="learn"){currentSpeech=$("content").textContent;currentClip="learn-"+step+"-question"}else if(mode==="game"){
 const introductions=lang==="pt-PT"?[
 "Olá! Vamos descobrir as cores! Olha para o sol. De que cor é?",
 "Preparado para contar? Olha com atenção para as estrelas. Quantas consegues ver?",
@@ -291,7 +299,7 @@ currentSpeech=introductions[step];currentClip="game-"+step+"-question";
 }else{
 currentSpeech=(lang==="pt-PT"?"Está na hora da história! ":"Story time! ")+currentSpeech;currentClip="story-"+step+"-question";
 }
-const answers=mode==="game"?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
+const answers=(mode==="game"||mode==="learn")?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
 $("choices").innerHTML="";
 answers.forEach((value,i)=>{
 const b=document.createElement("button");
@@ -304,7 +312,7 @@ autoSpeak();
 function choose(i,answers){
 if(selected)return;
 selected=true;
-const q=(mode==="game"?questions:story)[step];
+const q=(mode==="game"?questions:mode==="learn"?learnQuestions:story)[step];
 const correct=i===q.correct;
 $("message").textContent=correct?t("correct"):t("retry");
 if(correct){
@@ -323,7 +331,7 @@ const goodStoryPT=["Que gesto tão bonito! A Lili vai ajudar o seu novo amigo.",
 const badStoryPT=["Podemos fazer melhor! Quando alguém está perdido, devemos procurar ajudar com segurança.","É mais seguro pedir ajuda a alguém de confiança, como a Olívia.","Vamos celebrar juntos a amizade!"];
 const goodStoryEN=["How kind! Lili is going to help her new friend.","Great idea! Asking someone you trust for help is important.","Hooray! Friendship makes everything more special!"];
 const badStoryEN=["Let's try a kinder choice! When someone is lost, we should find safe help.","It's safer to ask someone we trust, like Olivia.","Let's celebrate friendship together!"];
-const feedback=mode==="game"?(lang==="pt-PT"?(correct?goodPT:badPT):(correct?goodEN:badEN))[step]:(lang==="pt-PT"?(correct?goodStoryPT:badStoryPT):(correct?goodStoryEN:badStoryEN))[step];
+const feedback=mode==="learn"?(correct?(lang==="pt-PT"?"Muito bem! Contaste corretamente!":"Great counting! You got it!"):(lang==="pt-PT"?"Boa tentativa! Conta os animais com calma e experimenta outra vez na próxima!":"Good try! Count carefully and keep practising!")):mode==="game"?(lang==="pt-PT"?(correct?goodPT:badPT):(correct?goodEN:badEN))[step]:(lang==="pt-PT"?(correct?goodStoryPT:badStoryPT):(correct?goodStoryEN:badStoryEN))[step];
 $("message").textContent=feedback;
 [...$("choices").children].forEach((b,j)=>{b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
 playEffect(correct);
@@ -335,6 +343,26 @@ $("next").classList.remove("hidden");
 function advance(){
 step++;render();
 }
+const learnQuestions=[
+{pt:"Quantos gatos consegues contar?",en:"How many cats can you count?",pic:"🐱 🐱",a:["1","2","3"],correct:1},
+{pt:"Quantas maçãs estão aqui?",en:"How many apples are here?",pic:"🍎 🍎 🍎",a:["2","3","4"],correct:1},
+{pt:"Quantas borboletas estão aqui?",en:"How many butterflies are here?",pic:"🦋 🦋 🦋 🦋",a:["3","4","5"],correct:1},
+{pt:"Quantos cães estão aqui?",en:"How many dogs are here?",pic:"🐶 🐶 🐶 🐶 🐶",a:["4","5","6"],correct:1}
+];
+function openLearn(){start("learn")}
+const drawing=$("drawing"),ctx=drawing.getContext("2d");
+let drawingNow=false,drawColour="#7046cc";
+const colours=["#7046cc","#f44336","#ff9800","#ffdc35","#36b96a","#2196f3","#ef6cba","#202020","#ffffff"];
+function initDrawing(){ctx.fillStyle="#ffffff";ctx.fillRect(0,0,drawing.width,drawing.height);ctx.lineWidth=9;ctx.lineCap="round";ctx.lineJoin="round"}
+function makePalette(){const p=$("palette");p.replaceChildren();colours.forEach(c=>{const b=document.createElement("button");b.type="button";b.className="swatch"+(c===drawColour?" active":"");b.style.background=c;b.setAttribute("aria-label",c);b.onclick=()=>{drawColour=c;makePalette()};p.appendChild(b)})}
+function openCreate(){stopVoice();mode="";$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.add("hidden");$("creative").classList.remove("hidden");makePalette();window.scrollTo(0,0)}
+function drawPoint(e){const r=drawing.getBoundingClientRect();return{x:(e.clientX-r.left)*drawing.width/r.width,y:(e.clientY-r.top)*drawing.height/r.height}}
+drawing.addEventListener("pointerdown",e=>{e.preventDefault();drawingNow=true;drawing.setPointerCapture(e.pointerId);const p=drawPoint(e);ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.fillStyle=drawColour;ctx.beginPath();ctx.arc(p.x,p.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.moveTo(p.x,p.y)});
+drawing.addEventListener("pointermove",e=>{if(!drawingNow)return;e.preventDefault();const p=drawPoint(e);ctx.strokeStyle=drawColour;ctx.lineTo(p.x,p.y);ctx.stroke()});
+drawing.addEventListener("pointerup",()=>drawingNow=false);drawing.addEventListener("pointercancel",()=>drawingNow=false);
+function clearDrawing(){initDrawing()}
+function saveDrawing(){const a=document.createElement("a");a.download="mundo-magico-desenho.png";a.href=drawing.toDataURL("image/png");a.click()}
+initDrawing();
 function showSoon(){alert(t("soon"))}
 $("lang").value=lang;
 $("total").textContent=points;
