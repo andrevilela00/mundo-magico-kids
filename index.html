@@ -103,6 +103,33 @@ button:focus-visible,select:focus-visible{outline:4px solid #f5a623;outline-offs
 @media(prefers-reduced-motion:reduce){.emoji,.correct-pop,.sparkle,.card{animation:none!important}}
 #message{font-weight:700;text-align:center}
 footer{text-align:center;font-size:12px;color:#777;padding:20px}
+
+/* v1.4: playful responsive navigation */
+body{background:linear-gradient(160deg,#f5edff 0%,#fff9eb 65%,#ecf9ff 100%);min-height:100dvh}
+header{background:linear-gradient(120deg,#6337c2,#8959d8);border-radius:0 0 30px 30px;padding:24px 18px 22px;box-shadow:0 5px 20px #5932a52b}
+header h1{letter-spacing:-.5px}
+header .parent-entry{display:none}
+main{max-width:750px}
+.card{border:1px solid #eee2ff;box-shadow:0 9px 28px #43236c12}
+.welcome-hero{display:flex;align-items:center;gap:14px;background:linear-gradient(115deg,#eee2ff,#fff4d4);border-radius:22px;padding:16px;margin-bottom:18px}
+.welcome-hero h2{margin:0;font-size:clamp(19px,5vw,26px);line-height:1.15}
+.welcome-hero p{margin:8px 0 0;font-size:14px;color:#6c5486}
+.hero-fox{font-size:clamp(50px,15vw,76px);line-height:1;animation:fox-float 3s ease-in-out infinite}
+@keyframes fox-float{50%{transform:translateY(-6px) rotate(-5deg)}}
+.category-filters{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.category-filters::-webkit-scrollbar{display:none}
+.filter-chip{flex:0 0 auto;background:#f2e9ff;color:#563783;border:2px solid transparent;border-radius:999px;padding:11px 14px;font-size:14px;min-height:46px}
+.filter-chip.active{background:#7046cc;color:#fff;border-color:#7046cc;box-shadow:0 4px 10px #7046cc30}
+.surprise-btn{width:100%;background:linear-gradient(100deg,#ffcf67,#ffad75);color:#57304e;min-height:54px;margin:5px 0 16px;font-size:18px;box-shadow:0 4px 0 #e9a251}
+.activity-tiles .tile{position:relative;border:2px solid #ffffffaa;border-radius:23px;min-height:132px;box-shadow:0 5px 0 #4e34701c;transition:transform .15s ease,box-shadow .15s ease}
+.activity-tiles .tile:active{transform:scale(.96);box-shadow:0 2px 0 #4e34701c}
+.activity-tiles .tile span{font-size:clamp(42px,11vw,60px);line-height:1.2}
+.activity-tiles .tile b{font-size:clamp(16px,4.2vw,20px)}
+.activity-tiles .tile.hidden{display:none!important}
+#lang{width:100%;background:#f0e9ff;color:#4b307b;margin:8px 0 12px;font-weight:700}
+#miniFeedback:not(:empty),#message:not(:empty){background:#f3edff;border-radius:14px;padding:12px}
+@media(max-width:390px){.welcome-hero{padding:12px}.hero-fox{font-size:52px}.activity-tiles .tile{min-height:120px}}
+@media(prefers-reduced-motion:reduce){.hero-fox{animation:none}.activity-tiles .tile{transition:none}}
 </style>
 </head>
 <body>
@@ -114,20 +141,20 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </header>
 <main>
 <section id="home" class="card">
-<h2 id="welcome">Olá, pequeno explorador! 🦊</h2>
+<div class="welcome-hero"><div class="hero-fox" aria-hidden="true">🦊</div><div><h2 id="welcome">Olá, pequeno explorador! 🦊</h2><p id="heroHint">Pronto para uma aventura mágica?</p></div></div>
 <label>🌍 Idioma / Language</label>
 <select id="lang" onchange="changeLanguage()">
 <option value="pt-PT">🇵🇹 Português</option>
 <option value="en-GB">🇬🇧 English</option>
 </select>
-<p id="intro">Escolhe uma aventura:</p>
-<div class="tiles">
-<button class="tile blue" onclick="openGame()"><span>🎨</span><b id="games">Jogos</b></button>
-<button class="tile yellow" onclick="openStory()"><span>🦊</span><b id="stories">Histórias</b></button>
-<button class="tile green" onclick="openLearn()"><span>🔢</span><b id="learn">Aprender</b></button>
-<button class="tile pink" onclick="openCreate()"><span>🖍️</span><b id="create">Criar</b></button>
+<p id="intro">Escolhe uma aventura:</p><div class="category-filters" role="group" aria-label="Filtrar atividades"><button class="filter-chip active" data-filter="all" onclick="filterActivities('all')" id="filterAll">✨ Tudo</button><button class="filter-chip" data-filter="play" onclick="filterActivities('play')" id="filterPlay">🎲 Jogar</button><button class="filter-chip" data-filter="learn" onclick="filterActivities('learn')" id="filterLearn">📚 Aprender</button><button class="filter-chip" data-filter="create" onclick="filterActivities('create')" id="filterCreate">🎨 Criar</button></div><button class="surprise-btn" onclick="surpriseActivity()" id="surpriseButton">🎁 Surpreende-me!</button>
+<div class="tiles activity-tiles">
+<button class="tile blue" data-category="play" onclick="openGame()"><span>🎨</span><b id="games">Jogos</b></button>
+<button class="tile yellow" data-category="play" onclick="openStory()"><span>🦊</span><b id="stories">Histórias</b></button>
+<button class="tile green" data-category="learn" onclick="openLearn()"><span>🔢</span><b id="learn">Aprender</b></button>
+<button class="tile pink" data-category="create" onclick="openCreate()"><span>🖍️</span><b id="create">Criar</b></button>
 </div>
-<h3 id="moreGamesTitle">🎲 Mais jogos</h3><div class="tiles"><button class="tile green" onclick="openMini('memory')"><span>🧠</span><b id="memoryLabel">Memória</b></button><button class="tile blue" onclick="openMini('shapes')"><span>🔷</span><b id="shapesLabel">Formas e cores</b></button><button class="tile pink" onclick="openMini('puzzle')"><span>🧩</span><b id="puzzleLabel">Puzzles</b></button><button class="tile green" onclick="openMini('numbers')"><span>🔢</span><b id="numbersLabel">Números e quantidades</b></button><button class="tile yellow" onclick="openMini('math')"><span>➕</span><b id="mathLabel">Matemática</b></button></div><p class="center">⭐ <span id="total">0</span></p><div id="achievements" class="achievements" aria-live="polite"></div>
+<h3 id="moreGamesTitle">🎲 Mais jogos</h3><div class="tiles activity-tiles"><button class="tile green" data-category="play" onclick="openMini('memory')"><span>🧠</span><b id="memoryLabel">Memória</b></button><button class="tile blue" data-category="learn" onclick="openMini('shapes')"><span>🔷</span><b id="shapesLabel">Formas e cores</b></button><button class="tile pink" data-category="play" onclick="openMini('puzzle')"><span>🧩</span><b id="puzzleLabel">Puzzles</b></button><button class="tile green" data-category="learn" onclick="openMini('numbers')"><span>🔢</span><b id="numbersLabel">Números e quantidades</b></button><button class="tile yellow" data-category="learn" onclick="openMini('math')"><span>➕</span><b id="mathLabel">Matemática</b></button></div><p class="center">⭐ <span id="total">0</span></p><div id="achievements" class="achievements" aria-live="polite"></div>
 <button class="choice" onclick="openSettings()">⚙️ <span id="settingsLabel">Definições dos pais</span></button>
 </section>
 
@@ -160,7 +187,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 1.3.1 · Sem publicidade</footer>
+<footer>Versão de testes 1.4.0 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -176,7 +203,7 @@ let deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 let speechTurn=0;
 const texts={
 "pt-PT":{
-subtitle:"Brincar, descobrir e aprender!",
+subtitle:"Brincar, descobrir e aprender!",heroHint:"Pronto para uma aventura mágica?",filterAll:"✨ Tudo",filterPlay:"🎲 Jogar",filterLearn:"📚 Aprender",filterCreate:"🎨 Criar",surpriseButton:"🎁 Surpreende-me!",
 welcome:"Olá, pequeno explorador! 🦊",
 intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
@@ -185,7 +212,7 @@ done:"Parabéns! Terminaste a atividade!",
 soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!",moreGamesTitle:"🎲 Mais jogos",puzzleLabel:"Puzzles",numbersLabel:"Números e quantidades",mathLabel:"Matemática",mathIntro:"Vamos juntar e retirar objetos!",mathAdd:"Junta",mathSubtract:"Retira",mathQuestion:"Quantos ficam?",mathWin:"Parabéns! És uma estrela da matemática!",numbersIntro:"Conta os desenhos e escolhe o número!",numbersQuestion:"Quantos consegues contar?",numbersWin:"Fantástico! Terminaste os números!",achievementsTitle:"Conquistas",puzzleIntro:"Reconstrói a imagem! Escolhe uma peça e toca no lugar certo.",puzzleNext:"Encontra a peça seguinte",puzzleGood:"Muito bem! Essa é a peça certa!",puzzleNextButton:"➡️ Próximo puzzle",puzzleFinished:"🎉 Imagem completa!",puzzleTry:"Experimenta outra peça!",memoryLabel:"Memória",shapesLabel:"Formas e cores",difficultyLabel:"Dificuldade",easyLabel:"Fácil",mediumLabel:"Médio",hardLabel:"Difícil",miniRestart:"🔄 Jogar novamente",memoryIntro:"Encontra os pares iguais!",shapesIntro:"Toca na forma com a cor pedida!",pairs:"Pares encontrados",attempts:"Tentativas",miniDone:"Fantástico! Conseguiste!",shapeCorrect:"Muito bem! Acertaste!",shapeWrong:"Boa tentativa! Experimenta outra vez.",shapePrompt:"Encontra",drawTitle:"🖍️ Vamos desenhar!",drawHint:"Escolhe uma cor e desenha com o dedo!",clearDraw:"🧽 Limpar",saveDraw:"💾 Guardar imagem",learnTitle:"🔢 Vamos contar!",learnQuestion:"Quantos animais consegues contar?"
 },
 "en-GB":{
-subtitle:"Play, discover and learn!",
+subtitle:"Play, discover and learn!",heroHint:"Ready for a magical adventure?",filterAll:"✨ All",filterPlay:"🎲 Play",filterLearn:"📚 Learn",filterCreate:"🎨 Create",surpriseButton:"🎁 Surprise me!",
 welcome:"Hello, little explorer! 🦊",
 intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
@@ -214,9 +241,9 @@ function changeLanguage(){
 lang=$("lang").value;
 deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel","drawTitle","drawHint","clearDraw","saveDraw","moreGamesTitle","memoryLabel","shapesLabel","puzzleLabel","numbersLabel","mathLabel","difficultyLabel","easyLabel","mediumLabel","hardLabel","miniRestart"])
+for(const id of ["subtitle","welcome","heroHint","filterAll","filterPlay","filterLearn","filterCreate","surpriseButton","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel","drawTitle","drawHint","clearDraw","saveDraw","moreGamesTitle","memoryLabel","shapesLabel","puzzleLabel","numbersLabel","mathLabel","difficultyLabel","easyLabel","mediumLabel","hardLabel","miniRestart"])
 $(id).textContent=t(id);
-renderAchievements();if(mode)render();
+renderAchievements();filterActivities(activeActivityFilter);if(mode)render();
 if(miniMode&&!$("mini").classList.contains("hidden"))restartMini();
 if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
 }
@@ -319,6 +346,9 @@ const c=$("celebration");c.replaceChildren();
 for(let i=0;i<18;i++){const x=document.createElement("span");x.className="sparkle";x.textContent=["✨","⭐","💛","🌈"][i%4];x.style.left=(Math.random()*95)+"%";x.style.animationDelay=(Math.random()*.5)+"s";c.appendChild(x)}
 setTimeout(()=>c.replaceChildren(),2600);
 }
+let activeActivityFilter="all";
+function filterActivities(category){activeActivityFilter=category;document.querySelectorAll(".activity-tiles .tile").forEach(el=>{el.classList.toggle("hidden",category!=="all"&&el.dataset.category!==category)});document.querySelectorAll(".filter-chip").forEach(el=>{const active=el.dataset.filter===category;el.classList.toggle("active",active);el.setAttribute("aria-pressed",String(active))});const more=$("moreGamesTitle");const second=document.querySelectorAll(".activity-tiles")[1];if(second)more.classList.toggle("hidden",![...second.children].some(el=>!el.classList.contains("hidden")))}
+function surpriseActivity(){const available=[()=>openGame(),()=>openStory(),()=>openLearn(),()=>openCreate(),()=>openMini("memory"),()=>openMini("shapes"),()=>openMini("puzzle"),()=>openMini("numbers"),()=>openMini("math")];available[Math.floor(Math.random()*available.length)]()}
 function openGame(){start("game")}
 function openStory(){start("story")}
 function start(m){
