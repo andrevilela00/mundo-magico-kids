@@ -88,14 +88,14 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <select id="voiceGender" onchange="saveVoicePreference()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d">
 <option id="voiceFemale" value="female">Voz feminina</option><option id="voiceMale" value="male">Voz masculina</option>
 </select></p>
-<p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="say(lang==='pt-PT'?'Olá! Eu sou a Lili! Vamos brincar juntos?':'Hello! I am Lili! Shall we play together?')" style="width:100%;font-size:17px">🔊 Testar voz</button></div>
+<p><label id="deviceVoiceLabel" for="deviceVoice">Voz disponível no iPhone</label><br><select id="deviceVoice" onchange="saveDeviceVoice()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d"></select></p><p id="voiceNote" style="font-size:13px;color:#625478">A escolha masculino/feminino é uma preferência. Escolhe uma voz concreta abaixo.</p><p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="say(lang==='pt-PT'?'Olá! Eu sou a Lili! Vamos brincar juntos?':'Hello! I am Lili! Shall we play together?')" style="width:100%;font-size:17px">🔊 Testar voz</button></div>
 <p><label><input type="checkbox" id="effectsToggle" onchange="saveEffects()"> <span id="effectsLabel">Sons e animações de recompensa</span></label></p>
 <p id="autoHelp">Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.</p>
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 0.7.3 · Sem publicidade</footer>
+<footer>Versão de testes 0.7.4 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -107,6 +107,7 @@ fetch("./audio/manifest.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then
 let autoNarration=localStorage.getItem("mmk_auto")!=="false";
 let effectsOn=localStorage.getItem("mmk_effects")!=="false";
 let voiceGender=localStorage.getItem("mmk_voice_gender")==="male"?"male":"female";
+let deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 let speechTurn=0;
 const texts={
 "pt-PT":{
@@ -116,7 +117,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Voz da narração",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",voiceHeading:"Escolher voz",voiceTest:"🔊 Testar voz",voiceLabel:"Preferência de voz",deviceVoiceLabel:"Escolher voz disponível",voiceAuto:"Automática (Safari)",voiceNoOptions:"O Safari ainda não disponibilizou a lista de vozes.",voiceLabelNote:"Masculina/feminina é uma preferência; escolhe uma voz concreta abaixo para garantir a alteração.",voiceFemale:"Voz feminina",voiceMale:"Voz masculina",voiceAvailable:"A voz escolhida será usada quando estiver disponível no dispositivo.",voiceUnavailable:"Não foi encontrada uma voz claramente identificada para esta opção. O Safari poderá usar a voz predefinida.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -125,7 +126,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Narration voice",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",voiceHeading:"Choose voice",voiceTest:"🔊 Test voice",voiceLabel:"Voice preference",deviceVoiceLabel:"Choose available voice",voiceAuto:"Automatic (Safari)",voiceNoOptions:"Safari has not provided the voice list yet.",voiceLabelNote:"Male/female is a preference; choose an actual voice below to ensure it changes.",voiceFemale:"Female voice",voiceMale:"Male voice",voiceAvailable:"The selected voice will be used when available on this device.",voiceUnavailable:"No clearly identified voice was found for this option. Safari may use its default voice.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -141,8 +142,9 @@ const story=[
 function t(key){return texts[lang][key]}
 function changeLanguage(){
 lang=$("lang").value;
+deviceVoiceName=localStorage.getItem("mmk_voice_name_"+lang)||"";
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceHeading","voiceTest","deviceVoiceLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel"])
 $(id).textContent=t(id);
 if(mode)render();
 if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
@@ -162,13 +164,22 @@ const pattern=voiceNames[lang]&&voiceNames[lang][voiceGender];
 const known=pattern&&matches.filter(v=>pattern.test(v.name));
 return known&&known.length?(known.find(v=>/premium|enhanced|natural/i.test(v.name))||known[0]):null;
 }
+function saveDeviceVoice(){deviceVoiceName=$("deviceVoice").value;localStorage.setItem("mmk_voice_name_"+lang,deviceVoiceName);stopVoice();updateVoiceAvailability()}
 function updateVoiceAvailability(){
 const voices=("speechSynthesis" in window)?speechSynthesis.getVoices():[];
-const found=preferredVoice(voices);
-$("voiceAvailability").textContent=t(found?"voiceAvailable":"voiceUnavailable")+(found?" ("+found.name+")":"");
+const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
+const picker=$("deviceVoice");
+const selected=deviceVoiceName;
+picker.replaceChildren();
+const auto=document.createElement("option");auto.value="";auto.textContent=t("voiceAuto");picker.appendChild(auto);
+matches.forEach(v=>{const o=document.createElement("option");o.value=v.name;o.textContent=v.name+" ("+v.lang+")";picker.appendChild(o)});
+picker.value=matches.some(v=>v.name===selected)?selected:"";
+$("voiceNote").textContent=t("voiceLabelNote");
+$("voiceAvailability").textContent=matches.length?(matches.length+" "+(lang==="pt-PT"?"vozes disponíveis para este idioma.":"voices available for this language.")):t("voiceNoOptions");
 }
 function saveVoicePreference(){
 voiceGender=$("voiceGender").value;
+deviceVoiceName="";localStorage.removeItem("mmk_voice_name_"+lang);
 localStorage.setItem("mmk_voice_gender",voiceGender);
 updateVoiceAvailability();
 stopVoice();
@@ -188,7 +199,7 @@ const u=new SpeechSynthesisUtterance(spoken);
 u.lang=lang;u.rate=1;u.pitch=1.06;
 const voices=speechSynthesis.getVoices();
 const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
-u.voice=preferredVoice(voices)||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
+u.voice=matches.find(v=>v.name===deviceVoiceName)||preferredVoice(voices)||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
 speechSynthesis.speak(u);
 }
 if(file&&file.startsWith("audio/")&&file.endsWith(".mp3")&&!file.includes("..")){
