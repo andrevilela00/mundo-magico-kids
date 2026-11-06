@@ -9,9 +9,9 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,Arial;background:#f7f2ff;color:#322451}
 header{background:#7046cc;color:white;padding:22px;text-align:center}
-header h1{margin:0;font-size:27px}
+header h1{margin:0;font-size:27px;padding-right:40px;padding-left:40px}
 header p{margin:5px 0} .parent-entry{background:#ffcb62;color:#4a2a75;padding:11px 16px;margin-top:12px;font-size:15px} .choice:disabled{opacity:1} .card{animation:appear .22s ease-out} @keyframes appear{from{opacity:.5;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-main{max-width:650px;margin:auto;padding:18px}
+.parent-fixed{position:fixed;right:calc(12px + env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top));z-index:9999;width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:#ffcb62;color:#40236d;border:3px solid white;border-radius:50%;box-shadow:0 4px 14px #2e155780;font-size:26px;padding:0;touch-action:manipulation} main{max-width:650px;margin:auto;padding:18px}
 .card{background:white;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 4px 15px #43236c15}
 button,select{font:inherit;border:0;border-radius:15px;padding:15px;cursor:pointer}
 button{background:#7046cc;color:white;font-weight:700}
@@ -32,6 +32,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </style>
 </head>
 <body>
+<button type="button" class="parent-fixed" onclick="openSettings()" aria-label="Área dos pais / Parent area" title="Área dos pais / Parent area">⚙️</button>
 <header>
 <h1>🌈 Mundo Mágico Kids</h1>
 <p id="subtitle">Brincar, descobrir e aprender!</p>
@@ -75,7 +76,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
-<footer>Versão de testes 0.6.1 · Sem publicidade</footer>
+<footer>Versão de testes 0.6.2 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
