@@ -86,7 +86,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <label><input type="checkbox" id="autoNarration" onchange="saveNarration()"> <span id="autoLabel">Narração automática</span></label>
 <p><label id="voiceLabel" for="voiceGender">Voz da narração</label><br>
 <select id="voiceGender" onchange="saveVoicePreference()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d">
-<option value="female">Voz feminina</option><option value="male">Voz masculina</option>
+<option id="voiceFemale" value="female">Voz feminina</option><option id="voiceMale" value="male">Voz masculina</option>
 </select></p>
 <p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p>
 <p><label><input type="checkbox" id="effectsToggle" onchange="saveEffects()"> <span id="effectsLabel">Sons e animações de recompensa</span></label></p>
@@ -142,9 +142,10 @@ function t(key){return texts[lang][key]}
 function changeLanguage(){
 lang=$("lang").value;
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceLabel","autoHelp","saveLabel"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","voiceLabel","voiceFemale","voiceMale","autoHelp","saveLabel"])
 $(id).textContent=t(id);
 if(mode)render();
+if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
 }
 function stopVoice(){
 speechSerial++;
