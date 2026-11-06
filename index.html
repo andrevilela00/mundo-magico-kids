@@ -274,14 +274,14 @@ main{max-width:790px}
 <select id="voiceGender" onchange="saveVoicePreference()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d">
 <option id="voiceFemale" value="female">Voz feminina</option><option id="voiceMale" value="male">Voz masculina</option>
 </select></p>
-<p><label id="deviceVoiceLabel" for="deviceVoice">Voz disponível no iPhone</label><br><select id="deviceVoice" onchange="saveDeviceVoice()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d"></select></p><p id="voiceNote" style="font-size:13px;color:#625478">A escolha masculino/feminino é uma preferência. Escolhe uma voz concreta abaixo.</p><p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="testNarrator()" style="width:100%;font-size:17px">🔊 Testar voz</button></div>
+<p><label id="deviceVoiceLabel" for="deviceVoice">Voz disponível no iPhone</label><br><select id="deviceVoice" onchange="saveDeviceVoice()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d"></select></p><p id="voiceNote" style="font-size:13px;color:#625478">A escolha masculino/feminino é uma preferência. Escolhe uma voz concreta abaixo.</p><p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="testNarrator()" style="width:100%;font-size:17px">🔊 Testar voz</button><p id="narratorStatus" role="status" style="font-size:13px;color:#625478"></p><audio id="narratorPreview" controls preload="none" style="display:block;width:100%;margin-top:8px" aria-label="Demonstração do narrador"></audio></div>
 <p><label><input type="checkbox" id="effectsToggle" onchange="saveEffects()"> <span id="effectsLabel">Sons e animações de recompensa</span></label></p>
 <p><label><input type="checkbox" id="speechCheckToggle" onchange="saveSpeechCheck()"> <span id="speechCheckLabel">🎤 Permitir exercícios com microfone</span></label></p><p id="speechPrivacyNote" style="font-size:13px;color:#625478">O microfone só é ativado quando a criança toca no botão. O reconhecimento pode usar serviços do navegador. Não guardamos gravações na aplicação.</p><p id="autoHelp">Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.</p>
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.4 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.5 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -339,7 +339,7 @@ for(const id of ["subtitle","welcome","heroHint","filterAll","filterPlay","filte
 $(id).textContent=t(id);
 renderAchievements();filterActivities(activeActivityFilter);const us=lang==="en-US";$("landingEyebrow").textContent=us?"A WORLD OF DISCOVERIES":"UM MUNDO DE DESCOBERTAS";$("landingTitle").innerHTML=us?'The magic of <span>learning</span> starts here!':'A magia de <span>aprender</span> começa aqui!';$("landingDescription").textContent=us?"Games, stories and fun challenges for little explorers. Learn at your own pace, through play!":"Jogos, histórias e desafios para pequenos exploradores. Aprende ao teu ritmo, sempre a brincar!";$("landingStart").innerHTML=us?'🚀 Start the adventure <span aria-hidden="true">→</span>':'🚀 Começar a aventura <span aria-hidden="true">→</span>';$("landingSafe").textContent=us?"💜 Free · No ads · Made for kids":"💜 Grátis · Sem anúncios · Feito para crianças";$("homeKicker").textContent=us?"✨ YOUR WORLD":"✨ O TEU MUNDO";$("homeSub").textContent=us?"What shall we explore today?":"Escolhe o que queres explorar hoje";if(mode)render();
 if(miniMode&&!$("mini").classList.contains("hidden"))restartMini();
-if(!$("settings").classList.contains("hidden"))updateVoiceAvailability();
+if(!$("settings").classList.contains("hidden")){updateVoiceAvailability();updateNarratorPreview();}
 }
 function stopVoice(){
 speechSerial++;
@@ -373,7 +373,7 @@ function saveVoicePreference(){
 voiceGender=$("voiceGender").value;
 deviceVoiceName="";localStorage.removeItem("mmk_voice_name_"+lang);
 localStorage.setItem("mmk_voice_gender",voiceGender);
-updateVoiceAvailability();
+updateVoiceAvailability();updateNarratorPreview();
 stopVoice();
 }
 if("speechSynthesis" in window)speechSynthesis.addEventListener("voiceschanged",updateVoiceAvailability);
@@ -402,22 +402,23 @@ const playPromise=audioPlayer.play();
 if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{if(serial===speechSerial)fallback()});
 }else fallback();
 }
-function testNarrator(){
-if(lang==="pt-PT"){
- stopVoice();const serial=speechSerial;
- audioPlayer.src="./mundo_magico_kids_vozes_pt_en/audio/"+(voiceGender==="male"?"vasco_demo.mp3":"marta_demo.mp3");
- audioPlayer.onerror=()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")};
- const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")});
-}else{
- stopVoice();const serial=speechSerial;
- audioPlayer.src="./mundo_magico_kids_vozes_pt_en/audio/"+(voiceGender==="male"?"quentin_demo.mp3":"sarah_demo.mp3");
- audioPlayer.onerror=()=>{if(serial===speechSerial)say("Hello! Welcome!")};
- const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)say("Hello! Welcome!")});
+const narratorAudioRoot="./mundo_magico_kids_vozes_pt_en/audio/";
+function updateNarratorPreview(){
+ const file=lang==="pt-PT"?(voiceGender==="male"?"vasco_demo.mp3":"marta_demo.mp3"):(voiceGender==="male"?"quentin_demo.mp3":"sarah_demo.mp3");
+ const audio=$("narratorPreview");
+ if(!audio)return;
+ audio.pause();audio.src=narratorAudioRoot+file;audio.load();
+ $("narratorStatus").textContent=(lang==="pt-PT"?"Amostra: ":"Sample: ")+file.replace("_demo.mp3","");
 }
+function testNarrator(){
+ stopVoice();updateNarratorPreview();
+ const audio=$("narratorPreview");
+ const p=audio.play();
+ if(p&&p.catch)p.catch(()=>{$("narratorStatus").textContent=lang==="pt-PT"?"Não foi possível reproduzir. Experimenta o botão Play no leitor abaixo.":"Playback failed. Try Play on the audio player below."});
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
-function openSettings(){stopSpeechCheck();stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("mini").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("speechCheckToggle").checked=speechCheckEnabled;$("voiceGender").value=voiceGender;updateVoiceAvailability();window.scrollTo(0,0)}
+function openSettings(){stopSpeechCheck();stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("mini").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("speechCheckToggle").checked=speechCheckEnabled;$("voiceGender").value=voiceGender;updateVoiceAvailability();updateNarratorPreview();window.scrollTo(0,0)}
 function saveEffects(){effectsOn=$("effectsToggle").checked;localStorage.setItem("mmk_effects",String(effectsOn))}
 function saveSpeechCheck(){speechCheckEnabled=$("speechCheckToggle").checked;localStorage.setItem("mmk_speech_check",String(speechCheckEnabled));if(!speechCheckEnabled)stopSpeechCheck()}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
