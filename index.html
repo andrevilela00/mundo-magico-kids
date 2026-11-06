@@ -26,7 +26,18 @@ button:disabled{opacity:.5}
 .pink{background:#ffc4dc;color:#7e3154}
 .hidden{display:none}
 .center{text-align:center}
-.emoji{font-size:72px;text-align:center}
+.emoji{font-size:82px;text-align:center;min-height:115px;display:grid;place-items:center;animation:floaty 2.6s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+.choice{font-size:26px;min-height:68px;transition:transform .16s,background .16s;box-shadow:0 3px 0 #ccb9ee}
+.choice:active{transform:scale(.96)}
+.correct-pop{animation:pop .6s ease-out}
+@keyframes pop{0%{transform:scale(.8)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+#message{min-height:42px;line-height:1.5;font-size:18px}
+#progress{font-weight:700;color:#7046cc;text-align:center}
+#celebration{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:8000}
+.sparkle{position:absolute;top:-10vh;animation:fall 1.8s linear forwards;font-size:28px}
+@keyframes fall{to{transform:translateY(115vh) rotate(480deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.emoji,.correct-pop,.sparkle,.card{animation:none!important}}
 #message{font-weight:700;text-align:center}
 footer{text-align:center;font-size:12px;color:#777;padding:20px}
 </style>
@@ -60,6 +71,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <section id="activity" class="card hidden">
 <button onclick="goHome()">⌂ Início / Home</button>
 <h2 id="activityTitle"></h2>
+<p id="progress" aria-live="polite"></p>
 <div class="emoji" id="picture"></div>
 <p id="content"></p>
 <button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
@@ -72,11 +84,13 @@ footer{text-align:center;font-size:12px;color:#777;padding:20px}
 <h2 id="parentTitle">⚙️ Definições dos pais</h2>
 <p id="parentNotice">Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.</p>
 <label><input type="checkbox" id="autoNarration" onchange="saveNarration()"> <span id="autoLabel">Narração automática</span></label>
+<p><label><input type="checkbox" id="effectsToggle" onchange="saveEffects()"> <span id="effectsLabel">Sons e animações de recompensa</span></label></p>
 <p id="autoHelp">Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.</p>
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
-<footer>Versão de testes 0.7.0 · Sem publicidade</footer>
+<div id="celebration" aria-hidden="true"></div>
+<footer>Versão de testes 0.7.1 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";
@@ -86,6 +100,7 @@ const audioPlayer=new Audio();audioPlayer.preload="auto";
 let recordedClips={};let speechSerial=0;
 fetch("./audio/manifest.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(x=>{recordedClips=x&&typeof x==="object"?x:{}}).catch(()=>{});
 let autoNarration=localStorage.getItem("mmk_auto")!=="false";
+let effectsOn=localStorage.getItem("mmk_effects")!=="false";
 let speechTurn=0;
 const texts={
 "pt-PT":{
@@ -95,7 +110,7 @@ intro:"Escolhe uma aventura:",
 games:"Jogos",stories:"Histórias",learn:"Aprender",create:"Criar",
 correct:"Muito bem! ⭐",retry:"Boa tentativa! 💛",
 done:"Parabéns! Terminaste a atividade!",
-soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
+soon:"Esta atividade estará disponível em breve.",settingsLabel:"Definições dos pais",parentTitle:"⚙️ Definições dos pais",parentNotice:"Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.",autoLabel:"Narração automática",autoHelp:"Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.",effectsLabel:"Sons e animações de recompensa",saveLabel:"Guardar e voltar",answerIs:"A resposta correta é: ",headerParents:"Área dos pais",listen:"Ouvir novamente",next:"Vamos continuar!",end:"Fantástico! A aventura terminou!"
 },
 "en-GB":{
 subtitle:"Play, discover and learn!",
@@ -104,7 +119,7 @@ intro:"Choose an adventure:",
 games:"Games",stories:"Stories",learn:"Learn",create:"Create",
 correct:"Well done! ⭐",retry:"Good try! 💛",
 done:"Congratulations! You finished!",
-soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
+soon:"This activity is coming soon.",settingsLabel:"Parent settings",parentTitle:"⚙️ Parent settings",parentNotice:"Local demonstration preferences. There is no secure PIN or time control yet.",autoLabel:"Automatic narration",autoHelp:"On by default. Safari may require a tap before playing audio.",effectsLabel:"Reward sounds and animations",saveLabel:"Save and return",answerIs:"The correct answer is: ",headerParents:"Parent area",listen:"Listen again",next:"Let’s carry on!",end:"Wonderful! The adventure is complete!"
 }};
 const questions=[
 {pt:"Qual é a cor do sol?",en:"What colour is the sun?",pic:"☀️",a:["🔴","🟡","🔵"],correct:1},
@@ -121,7 +136,7 @@ function t(key){return texts[lang][key]}
 function changeLanguage(){
 lang=$("lang").value;
 localStorage.setItem("mmk_lang",lang);
-for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","autoHelp","saveLabel"])
+for(const id of ["subtitle","welcome","intro","games","stories","learn","create","headerParents","settingsLabel","parentTitle","parentNotice","autoLabel","effectsLabel","autoHelp","saveLabel"])
 $(id).textContent=t(id);
 if(mode)render();
 }
@@ -155,7 +170,8 @@ if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{if(
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
-function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;window.scrollTo(0,0)}
+function openSettings(){stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;window.scrollTo(0,0)}
+function saveEffects(){effectsOn=$("effectsToggle").checked;localStorage.setItem("mmk_effects",String(effectsOn))}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
 function closeSettings(){$("settings").classList.add("hidden");goHome()}
 function goHome(){
@@ -165,6 +181,28 @@ $("settings").classList.add("hidden");
 $("home").classList.remove("hidden");
 $("activity").classList.add("hidden");
 $("total").textContent=points;
+}
+function playEffect(success){
+if(!effectsOn)return;
+try{
+const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+const ctx=new AC();
+const notes=success?[523.25,659.25,783.99]:[392,440];
+notes.forEach((hz,i)=>{
+const o=ctx.createOscillator(),g=ctx.createGain(),at=ctx.currentTime+i*.11;
+o.type="sine";o.frequency.value=hz;
+g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(.075,at+.02);
+g.gain.exponentialRampToValueAtTime(.0001,at+.24);
+o.connect(g);g.connect(ctx.destination);o.start(at);o.stop(at+.25);
+});
+setTimeout(()=>ctx.close().catch(()=>{}),900);
+}catch(e){}
+}
+function celebrate(){
+if(!effectsOn||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+const c=$("celebration");c.replaceChildren();
+for(let i=0;i<18;i++){const x=document.createElement("span");x.className="sparkle";x.textContent=["✨","⭐","💛","🌈"][i%4];x.style.left=(Math.random()*95)+"%";x.style.animationDelay=(Math.random()*.5)+"s";c.appendChild(x)}
+setTimeout(()=>c.replaceChildren(),2600);
 }
 function openGame(){start("game")}
 function openStory(){start("story")}
@@ -176,10 +214,12 @@ render();
 }
 function render(){
 selected=false;
+$("picture").classList.remove("correct-pop");
 $("next").classList.add("hidden");
 $("message").textContent="";
 const data=mode==="game"?questions:story;
-if(step>=data.length){
+$("progress").textContent=(lang==="pt-PT"?"Aventura ":"Adventure ")+Math.min(step+1,data.length)+" / "+data.length;
+if(step>=data.length){$("progress").textContent="";
 $("activityTitle").textContent="🏆";
 $("picture").textContent="🎉";
 $("content").textContent=t("done");
@@ -226,6 +266,7 @@ const q=(mode==="game"?questions:story)[step];
 const correct=i===q.correct;
 $("message").textContent=correct?t("correct"):t("retry");
 if(correct){
+celebrate();$("picture").classList.add("correct-pop");
 points++;
 localStorage.setItem("mmk_points",points);
 }
@@ -243,6 +284,7 @@ const badStoryEN=["Let's try a kinder choice! When someone is lost, we should fi
 const feedback=mode==="game"?(lang==="pt-PT"?(correct?goodPT:badPT):(correct?goodEN:badEN))[step]:(lang==="pt-PT"?(correct?goodStoryPT:badStoryPT):(correct?goodStoryEN:badStoryEN))[step];
 $("message").textContent=feedback;
 [...$("choices").children].forEach((b,j)=>{b.disabled=true;if(j===q.correct){b.style.background="#b7edbf";b.style.color="#205c2e";b.textContent="✓ "+answers[j]}else if(j===i&&!correct){b.style.background="#ffd7d7"}});
+playEffect(correct);
 currentSpeech=$("message").textContent;
 currentClip=mode+"-"+step+"-"+(correct?"correct":"incorrect");
 say(currentSpeech,currentClip);
