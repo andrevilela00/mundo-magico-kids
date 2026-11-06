@@ -274,14 +274,14 @@ main{max-width:790px}
 <select id="voiceGender" onchange="saveVoicePreference()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d">
 <option id="voiceFemale" value="female">Voz feminina</option><option id="voiceMale" value="male">Voz masculina</option>
 </select></p>
-<p><label id="deviceVoiceLabel" for="deviceVoice">Voz disponível no iPhone</label><br><select id="deviceVoice" onchange="saveDeviceVoice()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d"></select></p><p id="voiceNote" style="font-size:13px;color:#625478">A escolha masculino/feminino é uma preferência. Escolhe uma voz concreta abaixo.</p><p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="say(lang==='pt-PT'?'Olá! Eu sou a Lili! Vamos brincar juntos?':'Hello! I am Lili! Shall we play together?')" style="width:100%;font-size:17px">🔊 Testar voz</button></div>
+<p><label id="deviceVoiceLabel" for="deviceVoice">Voz disponível no iPhone</label><br><select id="deviceVoice" onchange="saveDeviceVoice()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d"></select></p><p id="voiceNote" style="font-size:13px;color:#625478">A escolha masculino/feminino é uma preferência. Escolhe uma voz concreta abaixo.</p><p id="voiceAvailability" role="status" style="font-size:13px;color:#625478"></p><button type="button" id="voiceTest" onclick="testNarrator()" style="width:100%;font-size:17px">🔊 Testar voz</button></div>
 <p><label><input type="checkbox" id="effectsToggle" onchange="saveEffects()"> <span id="effectsLabel">Sons e animações de recompensa</span></label></p>
 <p><label><input type="checkbox" id="speechCheckToggle" onchange="saveSpeechCheck()"> <span id="speechCheckLabel">🎤 Permitir exercícios com microfone</span></label></p><p id="speechPrivacyNote" style="font-size:13px;color:#625478">O microfone só é ativado quando a criança toca no botão. O reconhecimento pode usar serviços do navegador. Não guardamos gravações na aplicação.</p><p id="autoHelp">Ativada por defeito. O Safari pode exigir um toque para iniciar o áudio.</p>
 <button class="choice" onclick="closeSettings()" id="saveLabel">Guardar e voltar</button>
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.1 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.2 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -401,6 +401,14 @@ audioPlayer.onerror=()=>{if(serial===speechSerial)fallback()};
 const playPromise=audioPlayer.play();
 if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(()=>{if(serial===speechSerial)fallback()});
 }else fallback();
+}
+function testNarrator(){
+if(lang==="pt-PT"){
+ stopVoice();const serial=speechSerial;
+ audioPlayer.src="./audio/"+(voiceGender==="male"?"vasco_demo.mp3":"marta_demo.mp3");
+ audioPlayer.onerror=()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")};
+ const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")});
+}else say("Hello! Welcome to Magic Kids World!")
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
