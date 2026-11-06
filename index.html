@@ -281,7 +281,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.2 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.3 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -408,7 +408,12 @@ if(lang==="pt-PT"){
  audioPlayer.src="./audio/"+(voiceGender==="male"?"vasco_demo.mp3":"marta_demo.mp3");
  audioPlayer.onerror=()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")};
  const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)say("Olá! Bem-vindo, ou bem-vinda.")});
-}else say("Hello! Welcome to Magic Kids World!")
+}else{
+ stopVoice();const serial=speechSerial;
+ audioPlayer.src="./audio/"+(voiceGender==="male"?"quentin_demo.mp3":"sarah_demo.mp3");
+ audioPlayer.onerror=()=>{if(serial===speechSerial)say("Hello! Welcome!")};
+ const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)say("Hello! Welcome!")});
+}
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
