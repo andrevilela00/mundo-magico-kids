@@ -133,7 +133,7 @@ if("speechSynthesis" in window)speechSynthesis.cancel();
 function say(str,clipKey){
 stopVoice();
 const serial=speechSerial;
-const spoken=String(str).replace(/[⭐🌟✨🏆🎉🎊💛❤️🦊🦌🦉🌳🌈🔊✓]/gu,"").replace(/[\\u{1F300}-\\u{1FAFF}]/gu,"").replace(/\\s+/g," ").trim();
+const spoken=String(str).replace(/[⭐🌟✨🏆🎉🎊💛❤️🦊🦌🦉🌳🌈🔊✓]/gu,"").replace(/[\u{1F300}-\u{1FAFF}]/gu,"").replace(/\s+/g," ").trim();
 if(!spoken)return;
 const file=clipKey&&recordedClips[lang]&&recordedClips[lang][clipKey];
 function fallback(){
@@ -145,7 +145,7 @@ const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
 u.voice=matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
 speechSynthesis.speak(u);
 }
-if(file&&/^audio\\/[a-zA-Z0-9_./-]+\\.mp3$/.test(file)){
+if(file&&file.startsWith("audio/")&&file.endsWith(".mp3")&&!file.includes("..")){
 audioPlayer.src="./"+file;
 audioPlayer.onended=()=>{};
 audioPlayer.onerror=()=>{if(serial===speechSerial)fallback()};
