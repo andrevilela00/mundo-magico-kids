@@ -281,7 +281,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.5 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.6 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -636,7 +636,27 @@ const englishWords=[
 {en:"Sun",pt:"Sol",emoji:"☀️",cat:"nature"},{en:"Moon",pt:"Lua",emoji:"🌙",cat:"nature"},{en:"Tree",pt:"Árvore",emoji:"🌳",cat:"nature"},{en:"Flower",pt:"Flor",emoji:"🌻",cat:"nature"}];
 let englishRound=0,englishLocked=false,englishDeck=[],englishTarget=null;let learningMode="listen";let speechCheckEnabled=localStorage.getItem("mmk_speech_check")==="true";let activeRecognition=null;let recognitionAttempts=0;
 englishWords.push(...[{"en":"Horse","pt":"Cavalo","emoji":"🐴","cat":"animals"},{"en":"Rabbit","pt":"Coelho","emoji":"🐰","cat":"animals"},{"en":"Cow","pt":"Vaca","emoji":"🐮","cat":"animals"},{"en":"Duck","pt":"Pato","emoji":"🦆","cat":"animals"},{"en":"Cheese","pt":"Queijo","emoji":"🧀","cat":"food"},{"en":"Egg","pt":"Ovo","emoji":"🥚","cat":"food"},{"en":"Water","pt":"Água","emoji":"💧","cat":"food"},{"en":"Strawberry","pt":"Morango","emoji":"🍓","cat":"food"},{"en":"Red","pt":"Vermelho","emoji":"🔴","cat":"colors"},{"en":"Blue","pt":"Azul","emoji":"🔵","cat":"colors"},{"en":"Green","pt":"Verde","emoji":"🟢","cat":"colors"},{"en":"Yellow","pt":"Amarelo","emoji":"🟡","cat":"colors"},{"en":"Orange","pt":"Laranja","emoji":"🟠","cat":"colors"},{"en":"Purple","pt":"Roxo","emoji":"🟣","cat":"colors"},{"en":"Black","pt":"Preto","emoji":"⚫","cat":"colors"},{"en":"White","pt":"Branco","emoji":"⚪","cat":"colors"},{"en":"Hello","pt":"Olá","emoji":"👋","cat":"greetings"},{"en":"Goodbye","pt":"Adeus","emoji":"🙋","cat":"greetings"},{"en":"Good morning","pt":"Bom dia","emoji":"🌅","cat":"greetings"},{"en":"Good night","pt":"Boa noite","emoji":"🌙","cat":"greetings"},{"en":"Thank you","pt":"Obrigado","emoji":"🙏","cat":"greetings"},{"en":"Please","pt":"Por favor","emoji":"🤲","cat":"greetings"},{"en":"Yes","pt":"Sim","emoji":"👍","cat":"greetings"},{"en":"No","pt":"Não","emoji":"👎","cat":"greetings"},{"en":"Bicycle","pt":"Bicicleta","emoji":"🚲","cat":"things"},{"en":"Train","pt":"Comboio","emoji":"🚆","cat":"things"},{"en":"Clock","pt":"Relógio","emoji":"⏰","cat":"things"},{"en":"Phone","pt":"Telefone","emoji":"📱","cat":"things"},{"en":"Star","pt":"Estrela","emoji":"⭐","cat":"nature"},{"en":"Rainbow","pt":"Arco-íris","emoji":"🌈","cat":"nature"},{"en":"Cloud","pt":"Nuvem","emoji":"☁️","cat":"nature"},{"en":"Rain","pt":"Chuva","emoji":"🌧️","cat":"nature"},{"en":"One","pt":"Um","emoji":"1️⃣","cat":"numbers"},{"en":"Two","pt":"Dois","emoji":"2️⃣","cat":"numbers"},{"en":"Three","pt":"Três","emoji":"3️⃣","cat":"numbers"},{"en":"Four","pt":"Quatro","emoji":"4️⃣","cat":"numbers"},{"en":"Five","pt":"Cinco","emoji":"5️⃣","cat":"numbers"},{"en":"Six","pt":"Seis","emoji":"6️⃣","cat":"numbers"},{"en":"Seven","pt":"Sete","emoji":"7️⃣","cat":"numbers"},{"en":"Eight","pt":"Oito","emoji":"8️⃣","cat":"numbers"},{"en":"Nine","pt":"Nove","emoji":"9️⃣","cat":"numbers"},{"en":"Ten","pt":"Dez","emoji":"🔟","cat":"numbers"}]);
-function speakVocabulary(str){stopVoice();if(!("speechSynthesis" in window))return;const targetLang=miniMode==="portuguese"?"pt-PT":"en-US";const u=new SpeechSynthesisUtterance(str);u.lang=targetLang;u.rate=.78;u.pitch=1.05;const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>v.lang.toLowerCase()===targetLang.toLowerCase()&&/premium|enhanced|natural/i.test(v.name))||voices.find(v=>v.lang.toLowerCase()===targetLang.toLowerCase())||null;speechSynthesis.speak(u)}
+let vocabularyAudioManifest={};
+fetch("./mundo_magico_kids_vozes_pt_en/audio/vocabulary_manifest.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(data=>{vocabularyAudioManifest=data&&typeof data==="object"?data:{}}).catch(()=>{});
+function speakVocabulary(str){
+ stopVoice();const serial=speechSerial;
+ const targetLang=miniMode==="portuguese"?"pt-PT":"en-US";
+ const key=String(str).normalize("NFC").trim();
+ const filename=vocabularyAudioManifest?.[targetLang]?.[voiceGender]?.[key];
+ function deviceFallback(){
+  if(serial!==speechSerial||!("speechSynthesis" in window))return;
+  const u=new SpeechSynthesisUtterance(str);u.lang=targetLang;u.rate=.78;u.pitch=1.05;
+  const voices=speechSynthesis.getVoices();const matches=voices.filter(v=>v.lang.toLowerCase()===targetLang.toLowerCase());
+  const pattern=voiceNames[targetLang]?.[voiceGender];
+  u.voice=matches.find(v=>v.name===deviceVoiceName)||(pattern&&matches.find(v=>pattern.test(v.name)))||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
+  speechSynthesis.speak(u);
+ }
+ if(typeof filename==="string"&&/^[a-zA-Z0-9_-]+\\.mp3$/.test(filename)){
+  audioPlayer.src=narratorAudioRoot+filename;
+  audioPlayer.onerror=()=>{if(serial===speechSerial)deviceFallback()};
+  const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)deviceFallback()});
+ }else deviceFallback();
+}
 
 const learningTopics=[["animals","🐶","Animais","Animals"],["food","🍎","Alimentos","Food"],["colors","🎨","Cores","Colours"],["numbers","🔢","Números","Numbers"],["greetings","👋","Saudações","Greetings"],["things","🚗","Objetos","Objects"],["nature","🌻","Natureza","Nature"],["all","✨","Surpresa","Surprise"]];
 function renderTopicCards(){const holder=$("topicCards");holder.replaceChildren();const selected=$("vocabularyTopic").value;for(const [id,emoji,pt,en] of learningTopics){const btn=document.createElement("button");btn.className="topic-card"+(selected===id?" selected":"");btn.setAttribute("aria-pressed",String(selected===id));btn.innerHTML='<span class="topic-emoji"></span><strong></strong>';btn.querySelector("span").textContent=emoji;btn.querySelector("strong").textContent=lang==="pt-PT"?pt:en;btn.onclick=()=>{$("vocabularyTopic").value=id;restartMini()};holder.appendChild(btn)}
