@@ -227,6 +227,16 @@ main{max-width:790px}
 .story-page-progress span.completed{background:#6cc39d;}
 #activity.storybook .answer-row{background:#fff;border-radius:18px;}
 @media(prefers-reduced-motion:reduce){#activity.storybook #picture{transition:none}}
+
+.story-nav{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:12px 0}
+.story-nav button{flex:1;min-width:125px;min-height:48px;border-radius:16px;font-weight:700}
+.story-nav button:disabled{opacity:.42;cursor:default}
+#activity.storybook #picture{min-height:240px;position:relative;overflow:hidden}
+#activity.storybook #picture:after{content:"✦  ✧  ✦";position:absolute;right:14px;top:10px;font-size:20px;letter-spacing:12px;color:#fff8c9;text-shadow:0 2px 4px #927eab66;pointer-events:none}
+#activity.storybook #progress{font-weight:750;letter-spacing:.02em;text-align:center}
+#activity.storybook #choices{margin-top:14px}
+#activity.storybook .choice{min-height:56px}
+@media(max-width:400px){.story-nav{gap:6px}.story-nav button{min-width:110px;font-size:13px;padding:10px 7px}}
 </style>
 </head>
 <body>
@@ -268,7 +278,7 @@ main{max-width:790px}
 <section id="activity" class="card hidden">
 <button onclick="goHome()">⌂ Início / Home</button>
 <h2 id="activityTitle"></h2>
-<p id="progress" aria-live="polite"></p><div id="storyPageProgress" class="story-page-progress hidden" aria-label="Progresso da história"></div>
+<p id="progress" aria-live="polite"></p><div id="storyNav" class="story-nav hidden"><button type="button" id="storyBack" onclick="previousStoryPage()">← Página anterior</button><button type="button" id="storyReplay" onclick="speakCurrent()">🔊 Ouvir página</button></div><div id="storyPageProgress" class="story-page-progress hidden" aria-label="Progresso da história"></div>
 <div class="emoji" id="picture"></div>
 <p id="content"></p>
 <button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
@@ -294,7 +304,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.9 · Sem publicidade</footer>
+<footer>Versão de testes 2.1.0 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -500,10 +510,12 @@ $("picture").classList.remove("correct-pop");
 $("next").classList.add("hidden");
 $("message").textContent="";
 const data=mode==="game"?questions:mode==="learn"?learnQuestions:story;
+const storyNav=$("storyNav");storyNav.classList.toggle("hidden",mode!=="story"||step>=story.length);
+if(mode==="story"&&step<story.length){$("storyBack").disabled=step===0;$("storyBack").textContent=lang==="pt-PT"?"← Página anterior":"← Previous page";$("storyReplay").textContent=lang==="pt-PT"?"🔊 Ouvir página":"🔊 Listen to page"}
 const storyProgress=$("storyPageProgress");storyProgress.classList.toggle("hidden",mode!=="story"||step>=story.length);
-if(mode==="story"&&step<story.length){storyProgress.replaceChildren();for(let i=0;i<story.length;i++){const dot=document.createElement("span");dot.className=i<step?"completed":i===step?"active":"";storyProgress.appendChild(dot)}$("picture").dataset.scene=String(step)}else delete $("picture").dataset.scene;
+if(mode==="story"&&step<story.length){storyProgress.setAttribute("aria-label",(lang==="pt-PT"?"Página ":"Page ")+(step+1)+"/"+story.length);storyProgress.replaceChildren();for(let i=0;i<story.length;i++){const dot=document.createElement("span");dot.className=i<step?"completed":i===step?"active":"";storyProgress.appendChild(dot)}$("picture").dataset.scene=String(step)}else delete $("picture").dataset.scene;
 $("next").textContent=mode==="story"?(lang==="pt-PT"?"📖 Página seguinte":"📖 Next page"):(lang==="pt-PT"?"➡️ Continuar":"➡️ Continue");
-$("progress").textContent=(lang==="pt-PT"?"Aventura ":"Adventure ")+Math.min(step+1,data.length)+" / "+data.length;
+$("progress").textContent=mode==="story"?(lang==="pt-PT"?"📖 Página ":"📖 Page ")+Math.min(step+1,data.length)+" / "+data.length:(lang==="pt-PT"?"Aventura ":"Adventure ")+Math.min(step+1,data.length)+" / "+data.length;
 if(step>=data.length){$("progress").textContent="";
 $("activityTitle").textContent="🏆";
 $("picture").textContent="🎉";
@@ -579,6 +591,7 @@ currentClip=mode+"-"+step+"-"+(correct?"correct":"incorrect");
 say(currentSpeech,currentClip);
 $("next").classList.remove("hidden");
 }
+function previousStoryPage(){if(mode!=="story"||step<=0)return;stopVoice();step--;render();window.scrollTo({top:0,behavior:"smooth"})}
 function advance(){
 step++;render();
 }
