@@ -281,7 +281,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.7 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.8 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -384,7 +384,9 @@ const spoken=String(str).replace(/[⭐🌟✨🏆🎉🎊💛❤️🦊🦌🦉�
 if(!spoken)return;
 const langClips=recordedClips[lang]||{};
 const genderClips=langClips[voiceGender]||{};
-const file=clipKey&&(genderClips[clipKey]||(!langClips.female&&!langClips.male?langClips[clipKey]:null));
+const recordedFile=clipKey&&(genderClips[clipKey]||(!langClips.female&&!langClips.male?langClips[clipKey]:null));
+const educationalFile=vocabularyAudioManifest?.[lang]?.[voiceGender]?.[spoken];
+const file=recordedFile||educationalFile;
 function fallback(){
 if(serial!==speechSerial||!("speechSynthesis" in window))return;
 const u=new SpeechSynthesisUtterance(spoken);
@@ -394,8 +396,8 @@ const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
 u.voice=matches.find(v=>v.name===deviceVoiceName)||preferredVoice(voices)||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
 speechSynthesis.speak(u);
 }
-if(file&&file.startsWith("audio/")&&file.endsWith(".mp3")&&!file.includes("..")){
-audioPlayer.src="./"+file;
+if(typeof file==="string"&&((file.startsWith("audio/")&&file.endsWith(".mp3")&&!file.includes(".."))||/^[a-zA-Z0-9_-]+\\.mp3$/.test(file))){
+audioPlayer.src=file.startsWith("audio/")?"./"+file:"./mundo_magico_kids_vozes_pt_en/audio/"+file;
 audioPlayer.onended=()=>{};
 audioPlayer.onerror=()=>{if(serial===speechSerial)fallback()};
 const playPromise=audioPlayer.play();
