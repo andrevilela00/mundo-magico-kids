@@ -239,6 +239,20 @@ main{max-width:790px}
 @media(max-width:400px){.story-nav{gap:6px}.story-nav button{min-width:110px;font-size:13px;padding:10px 7px}}
 
 .story-volume,.volume-setting{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff8e8;border-radius:16px;padding:12px;margin:10px 0}.story-volume label,.volume-setting label{font-weight:700}.story-volume input[type=range],.volume-setting input[type=range]{flex:1;min-width:110px;accent-color:#7046cc;min-height:36px}.story-volume output,.volume-setting output{font-weight:800;min-width:45px;text-align:right}
+
+/* Adventure cover v2.1.4 */
+.landing-page{min-height:min(790px,calc(100dvh - 135px));background:radial-gradient(circle at 18% 7%,#fff2b9,transparent 38%),radial-gradient(circle at 88% 12%,#cde8ff,transparent 42%),linear-gradient(165deg,#fff8eb 0%,#f3ebff 57%,#e7f7ff 100%);gap:12px;padding:26px 20px 29px}
+.landing-adventure{position:relative;width:min(100%,530px);height:clamp(220px,37vw,290px);margin:0 auto 4px;overflow:hidden;border-radius:32px;background:linear-gradient(#b9e5ff 0%,#f7e9ff 56%,#e7f8d9 57%);box-shadow:0 13px 32px #5c579b26,inset 0 0 0 4px #ffffffaa}
+.landing-hill{position:absolute;border-radius:50% 50% 0 0;bottom:-33%;height:64%;width:115%;left:-10%;background:#a3d9a0}.landing-hill.hill-back{bottom:-18%;left:32%;background:#c8e8a8;height:53%}.landing-hill.hill-front{background:#8fcf9a;bottom:-39%;left:-25%}
+.landing-rainbow{position:absolute;font-size:clamp(80px,17vw,124px);top:4%;left:36%;opacity:.85;filter:drop-shadow(0 6px 8px #ffffff80)}
+.landing-cloud{position:absolute;font-size:55px;top:10%;opacity:.8}.cloud-left{left:5%}.cloud-right{right:8%;top:16%}
+.landing-tree{position:absolute;font-size:clamp(66px,13vw,100px);bottom:13%;filter:drop-shadow(0 5px 4px #375e4b2e)}.tree-left{left:0}.tree-right{right:0}
+.landing-character{position:absolute;filter:drop-shadow(0 10px 5px #4d775e35);animation:floaty 3s ease-in-out infinite}.fox-character{font-size:clamp(92px,20vw,148px);bottom:8%;left:24%;z-index:2}.deer-character{font-size:clamp(74px,15vw,112px);bottom:10%;right:17%;animation-delay:-1.5s;z-index:2}.bird-character{font-size:45px;top:15%;right:24%;animation-duration:4s}
+.landing-flowers{position:absolute;bottom:4%;left:7%;right:7%;font-size:25px;z-index:3;letter-spacing:14px}.landing-sparkles{position:absolute;top:5%;left:16%;font-size:22px;letter-spacing:15px}
+.landing-page h2{font-size:clamp(31px,6.4vw,47px);max-width:590px}.landing-page>p:not(.landing-safe){max-width:530px}.landing-start{background:linear-gradient(115deg,#6d40cc,#a45be8 65%,#b567ef);box-shadow:0 7px 0 #4e2b95,0 14px 30px #6844a944}
+.landing-start:focus-visible{outline:4px solid #ffba4e;outline-offset:5px}
+@media(max-width:450px){.landing-page{padding:20px 12px 25px;min-height:calc(100dvh - 120px)}.landing-adventure{height:230px}.landing-flowers{letter-spacing:6px}.landing-previews span{padding:8px 10px}.landing-page h2{letter-spacing:-1px}}
+@media(prefers-reduced-motion:reduce){.landing-character{animation:none}}
 </style>
 </head>
 <body>
@@ -251,10 +265,10 @@ main{max-width:790px}
 <main>
 <section id="landing" class="landing-page" aria-labelledby="landingTitle">
  <div class="landing-sky" aria-hidden="true"><span class="landing-star star-a">✦</span><span class="landing-star star-b">✳</span><span class="landing-star star-c">✦</span></div>
- <div class="landing-mascot" aria-hidden="true"><span class="mascot-halo"></span><span class="mascot-fox">🦊</span><span class="mascot-spark">✨</span></div>
+ <div class="landing-adventure" aria-hidden="true"><div class="landing-cloud cloud-left">☁️</div><div class="landing-cloud cloud-right">☁️</div><div class="landing-rainbow">🌈</div><div class="landing-hill hill-back"></div><div class="landing-hill hill-front"></div><div class="landing-tree tree-left">🌳</div><div class="landing-tree tree-right">🌲</div><div class="landing-character fox-character">🦊</div><div class="landing-character deer-character">🦌</div><div class="landing-character bird-character">🐦</div><div class="landing-flowers">🌼 🌷 🌸 🌻</div><div class="landing-sparkles">✨ ⭐ ✨</div></div>
  <div class="landing-eyebrow">✨ <span id="landingEyebrow">UM MUNDO DE DESCOBERTAS</span> ✨</div>
  <h2 id="landingTitle">A magia de <span>aprender</span> começa aqui!</h2>
- <p id="landingDescription">Jogos, histórias e desafios para pequenos exploradores. Aprende ao teu ritmo, sempre a brincar!</p>
+ <p id="landingDescription">Entra num mundo mágico cheio de histórias, jogos e descobertas. A próxima aventura começa contigo!</p>
  <div class="landing-previews" aria-hidden="true"><span>🎨 <b>CRIAR</b></span><span>🧩 <b>JOGAR</b></span><span>🌍 <b>APRENDER</b></span></div>
  <button type="button" class="landing-start" onclick="enterApp()" id="landingStart">🚀 Começar a aventura <span aria-hidden="true">→</span></button>
  <p class="landing-safe" id="landingSafe">💜 Grátis · Sem anúncios · Feito para crianças</p>
@@ -306,7 +320,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.1.3 · Sem publicidade</footer>
+<footer>Versão de testes 2.1.4 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
