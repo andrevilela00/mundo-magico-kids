@@ -303,6 +303,9 @@ main{max-width:790px}
 
 /* Storybook original illustrations */
 #activity.storybook #picture{padding:0;min-height:0;overflow:hidden;display:block;background:#d8edff;line-height:0;border:5px solid #fff;box-shadow:0 9px 25px #4d5d8d2b;aspect-ratio:640/350}#activity.storybook .story-illustration{display:block;width:100%;height:100%;max-height:420px;animation:storySceneIn .5s ease-out}#activity.storybook .story-lili{width:120px;height:130px;filter:drop-shadow(0 7px 4px #75553e55)}#activity.storybook .story-landscape{transform-origin:center;animation:storyLandscapeIn .7s ease-out}#activity.storybook #content{max-width:750px;margin:19px auto;padding:0 6px}@keyframes storySceneIn{from{opacity:.55}to{opacity:1}}@keyframes storyLandscapeIn{from{transform:scale(1.025)}to{transform:scale(1)}}@media(prefers-reduced-motion:reduce){#activity.storybook .story-illustration,#activity.storybook .story-landscape{animation:none}}
+
+/* Storybook character animation and scene atmosphere v2.2.8 */
+#activity.storybook .story-fox-motion{animation:storybookFox 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}#activity.storybook .story-bird-motion{animation:storybookBird 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}#activity.storybook .story-owl-motion{animation:storybookOwl 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}#activity.storybook .story-turtle-motion{animation:storybookTurtle 4.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}#activity.storybook .story-deer-motion{animation:storybookDeer 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}#activity.storybook .story-floating-sparkles{animation:storybookSparkle 3s ease-in-out infinite}#activity.storybook .story-rain-drop{animation:storybookRain 1.2s linear infinite}#activity.storybook #picture{background:#e3f0fa}#activity.storybook .story-illustration{animation:storyPageTurn .55s ease-out both}@keyframes storybookFox{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -5px;rotate:1.5deg}}@keyframes storybookBird{0%,100%{translate:0 0}50%{translate:5px -13px}}@keyframes storybookOwl{0%,100%{rotate:-2deg}50%{rotate:3deg}}@keyframes storybookTurtle{0%,100%{translate:0 0}50%{translate:5px 0}}@keyframes storybookDeer{0%,100%{rotate:-1deg}50%{rotate:2deg}}@keyframes storybookSparkle{0%,100%{opacity:.3}50%{opacity:1}}@keyframes storybookRain{0%{translate:0 -18px;opacity:0}30%{opacity:1}100%{translate:-8px 42px;opacity:0}}@keyframes storyPageTurn{from{opacity:.2;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}@media(prefers-reduced-motion:reduce){#activity.storybook .story-fox-motion,#activity.storybook .story-bird-motion,#activity.storybook .story-owl-motion,#activity.storybook .story-turtle-motion,#activity.storybook .story-deer-motion,#activity.storybook .story-floating-sparkles,#activity.storybook .story-rain-drop,#activity.storybook .story-illustration{animation:none!important}}
 </style>
 </head>
 <body>
@@ -371,7 +374,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.2.7 · Sem publicidade</footer>
+<footer>Versão de testes 2.2.8 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -643,15 +646,16 @@ function renderStoryScene(page){
  if(c.tree)objects+=tree(465,230,.7);
  if(c.flower)for(let j=0;j<9;j++)objects+=flower(35+j*72,305+(j%3)*8,j%2?"#f8a7c9":"#ffd45f");
  if(c.tracks)objects+=`<g fill="#927255"><ellipse cx="272" cy="280" rx="9" ry="5"/><ellipse cx="301" cy="292" rx="9" ry="5"/><ellipse cx="330" cy="281" rx="9" ry="5"/></g>`;
- if(c.rain)for(let j=0;j<24;j++)objects+=`<path d="M${j*28} 25l-9 18" stroke="#8fbde5" stroke-width="4" stroke-linecap="round"/>`;
+ if(c.rain)for(let j=0;j<24;j++)objects+=`<path class="story-rain-drop" style="animation-delay:${(j%7)*-.17}s" d="M${j*28} 25l-9 18" stroke="#8fbde5" stroke-width="4" stroke-linecap="round"/>`;
  if(c.map)objects+=`<g transform="translate(370 190) rotate(-9)"><rect width="105" height="74" rx="8" fill="#fff1c9" stroke="#c39e6c" stroke-width="5"/><path d="M12 52Q34 12 55 36T95 15" fill="none" stroke="#7bb28a" stroke-width="5" stroke-dasharray="7 5"/><circle cx="90" cy="16" r="7" fill="#f0837d"/></g>`;
- if(c.bruno)objects+=deer(c.mother?415:426,236,.95);
- if(c.mother)objects+=deer(520,221,1.15);
- if(c.bird)objects+=`<g transform="translate(450 94)"><ellipse rx="23" ry="17" fill="#59b4e7"/><circle cx="-8" cy="-4" r="3" fill="#273e60"/><path d="M21-2l18 8-18 5Z" fill="#ffd45f"/><path d="M-15 9l-18 13" stroke="#428db9" stroke-width="7"/></g>`;
- if(c.owl)objects+=`<g transform="translate(505 145)"><ellipse rx="32" ry="41" fill="#b58a75"/><circle cx="-13" cy="-10" r="14" fill="#fff4e1"/><circle cx="13" cy="-10" r="14" fill="#fff4e1"/><circle cx="-13" cy="-10" r="5" fill="#352e43"/><circle cx="13" cy="-10" r="5" fill="#352e43"/><path d="M-5 6 0 16 5 6Z" fill="#f4b957"/></g>`;
- if(c.turtle)objects+=`<g transform="translate(475 283)"><ellipse rx="34" ry="20" fill="#619e6a"/><path d="M-31 2Q-24-34 8-26Q31-22 34 3Z" fill="#8ab776"/><circle cx="-35" cy="-1" r="13" fill="#9ccf8d"/><circle cx="-40" cy="-5" r="2" fill="#333"/></g>`;
- const foxArt=lili?`<g transform="translate(133 163) scale(1.1)">${lili}</g>`:"";
- const svg=`<svg class="story-illustration" viewBox="0 0 640 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${lang==="pt-PT"?"Ilustração da página ":"Story illustration for page "}${page+1}"><rect width="640" height="350" fill="${c.sky}"/><g class="story-landscape">${objects}</g>${foxArt}<g fill="#fff9" opacity=".75"><circle cx="150" cy="48" r="3"/><circle cx="270" cy="76" r="5"/><circle cx="355" cy="36" r="4"/></g></svg>`;
+ if(c.bruno)objects+=`<g class="story-deer-motion">${deer(c.mother?415:426,236,.95)}</g>`;
+ if(c.mother)objects+=`<g class="story-deer-motion" style="animation-delay:-.7s">${deer(520,221,1.15)}</g>`;
+ if(c.bird)objects+=`<g class="story-bird-motion" transform="translate(450 94)"><ellipse rx="23" ry="17" fill="#59b4e7"/><circle cx="-8" cy="-4" r="3" fill="#273e60"/><path d="M21-2l18 8-18 5Z" fill="#ffd45f"/><path d="M-15 9l-18 13" stroke="#428db9" stroke-width="7"/></g>`;
+ if(c.owl)objects+=`<g class="story-owl-motion" transform="translate(505 145)"><ellipse rx="32" ry="41" fill="#b58a75"/><circle cx="-13" cy="-10" r="14" fill="#fff4e1"/><circle cx="13" cy="-10" r="14" fill="#fff4e1"/><circle cx="-13" cy="-10" r="5" fill="#352e43"/><circle cx="13" cy="-10" r="5" fill="#352e43"/><path d="M-5 6 0 16 5 6Z" fill="#f4b957"/></g>`;
+ if(c.turtle)objects+=`<g class="story-turtle-motion" transform="translate(475 283)"><ellipse rx="34" ry="20" fill="#619e6a"/><path d="M-31 2Q-24-34 8-26Q31-22 34 3Z" fill="#8ab776"/><circle cx="-35" cy="-1" r="13" fill="#9ccf8d"/><circle cx="-40" cy="-5" r="2" fill="#333"/></g>`;
+ const foxArt=lili?`<g class="story-fox-motion" transform="translate(133 163) scale(1.1)">${lili}</g>`:"";
+ const decorations=`<g class="story-floating-sparkles" fill="#fff7ce"><path d="M115 67l5-14 5 14 14 5-14 5-5 14-5-14-14-5Z"/><path d="M535 90l3-10 3 10 10 3-10 3-3 10-3-10-10-3Z"/></g>`;
+ const svg=`<svg class="story-illustration" viewBox="0 0 640 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${lang==="pt-PT"?"Ilustração da página ":"Story illustration for page "}${page+1}"><rect width="640" height="350" fill="${c.sky}"/><g class="story-landscape">${objects}</g>${foxArt}${decorations}<g fill="#fff9" opacity=".75"><circle cx="150" cy="48" r="3"/><circle cx="270" cy="76" r="5"/><circle cx="355" cy="36" r="4"/></g></svg>`;
  $("picture").innerHTML=svg;
 }
 
