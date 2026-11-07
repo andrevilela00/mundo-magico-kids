@@ -214,6 +214,19 @@ main{max-width:790px}
 #home select{width:100%;background:#f4edff;color:#50367a;border:2px solid #e4d6fa;margin:7px 0}
 @media(max-width:390px){.landing-page{padding:19px 14px 28px;min-height:610px}.landing-mascot{width:145px;height:145px}.mascot-fox{font-size:80px}.landing-previews{gap:5px}.landing-previews span{padding:7px 9px}.landing-start{min-height:68px}#home .tile{min-height:118px}}
 @media(prefers-reduced-motion:reduce){.mascot-fox{animation:none}.landing-start,#home .tile{transition:none}}
+
+/* Storybook layout: responsive illustrated scenes */
+#activity.storybook{background:linear-gradient(160deg,#fffaf1,#f6f0ff 68%,#edf9ff);}
+#activity.storybook #picture{display:flex;align-items:center;justify-content:center;min-height:205px;border-radius:26px;background:radial-gradient(circle at 50% 70%,#e0f7cf 0 22%,transparent 23%),linear-gradient(180deg,#d9f0ff 0%,#f4e7ff 65%,#d9f5d3 100%);font-size:clamp(65px,15vw,110px);letter-spacing:.08em;box-shadow:inset 0 -8px 0 #cce9c9,0 10px 28px #66559a18;transition:background .25s;}
+#activity.storybook #picture[data-scene="1"]{background:radial-gradient(circle at 80% 15%,#fff7b3 0 9%,transparent 10%),linear-gradient(160deg,#c9e6ff,#e6e3ff 62%,#d2edc4);}
+#activity.storybook #picture[data-scene="2"]{background:radial-gradient(circle at 70% 22%,#fff1a9 0 12%,transparent 13%),linear-gradient(150deg,#ffedd4,#fce2ed 60%,#d9f4d2);}
+#activity.storybook #content{font-size:clamp(19px,4.7vw,24px);font-weight:650;line-height:1.55;text-align:center;margin:18px 0;}
+.story-page-progress{display:flex;gap:9px;justify-content:center;margin:12px 0;}
+.story-page-progress span{height:9px;flex:1;max-width:72px;border-radius:12px;background:#e0d9ef;}
+.story-page-progress span.active{background:#8866df;}
+.story-page-progress span.completed{background:#6cc39d;}
+#activity.storybook .answer-row{background:#fff;border-radius:18px;}
+@media(prefers-reduced-motion:reduce){#activity.storybook #picture{transition:none}}
 </style>
 </head>
 <body>
@@ -255,7 +268,7 @@ main{max-width:790px}
 <section id="activity" class="card hidden">
 <button onclick="goHome()">⌂ Início / Home</button>
 <h2 id="activityTitle"></h2>
-<p id="progress" aria-live="polite"></p>
+<p id="progress" aria-live="polite"></p><div id="storyPageProgress" class="story-page-progress hidden" aria-label="Progresso da história"></div>
 <div class="emoji" id="picture"></div>
 <p id="content"></p>
 <button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
@@ -281,7 +294,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.0.8 · Sem publicidade</footer>
+<footer>Versão de testes 2.0.9 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -474,7 +487,7 @@ function surpriseActivity(){const available=[()=>openGame(),()=>openStory(),()=>
 function openGame(){start("game")}
 function openStory(){start("story")}
 function start(m){
-stopVoice();miniRound++;miniMode="";mode=m;step=0;selected=false;
+stopVoice();miniRound++;miniMode="";mode=m;step=0;selected=false;$("activity").classList.toggle("storybook",m==="story");
 $("home").classList.add("hidden");
 $("creative").classList.add("hidden");
 $("mini").classList.add("hidden");
@@ -487,6 +500,9 @@ $("picture").classList.remove("correct-pop");
 $("next").classList.add("hidden");
 $("message").textContent="";
 const data=mode==="game"?questions:mode==="learn"?learnQuestions:story;
+const storyProgress=$("storyPageProgress");storyProgress.classList.toggle("hidden",mode!=="story"||step>=story.length);
+if(mode==="story"&&step<story.length){storyProgress.replaceChildren();for(let i=0;i<story.length;i++){const dot=document.createElement("span");dot.className=i<step?"completed":i===step?"active":"";storyProgress.appendChild(dot)}$("picture").dataset.scene=String(step)}else delete $("picture").dataset.scene;
+$("next").textContent=mode==="story"?(lang==="pt-PT"?"📖 Página seguinte":"📖 Next page"):(lang==="pt-PT"?"➡️ Continuar":"➡️ Continue");
 $("progress").textContent=(lang==="pt-PT"?"Aventura ":"Adventure ")+Math.min(step+1,data.length)+" / "+data.length;
 if(step>=data.length){$("progress").textContent="";
 $("activityTitle").textContent="🏆";
@@ -516,7 +532,7 @@ const introductions=lang==="pt-PT"?[
 ];
 currentSpeech=introductions[step];currentClip="game-"+step+"-question";
 }else{
-currentSpeech=(lang==="pt-PT"?"Está na hora da história! ":"Story time! ")+currentSpeech;currentClip="story-"+step+"-question";
+currentSpeech=$("content").textContent;currentClip="story-"+step+"-question";
 }
 const answers=(mode==="game"||mode==="learn")?q.a:(lang==="pt-PT"?q.aPT:q.aEN);
 $("readAnswers").classList.remove("hidden");$("readAnswers").textContent=lang==="pt-PT"?"🔊 Ouvir as respostas":"🔊 Listen to the answers";
