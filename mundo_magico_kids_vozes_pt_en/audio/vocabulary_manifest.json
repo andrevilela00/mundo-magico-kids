@@ -71,7 +71,17 @@
       "O sol é amarelo.": "marta_frase_010.mp3",
       "Vejo um carro.": "marta_frase_011.mp3",
       "Está a chover.": "marta_frase_012.mp3",
-      "Tenho duas mãos.": "marta_frase_013.mp3"
+      "Tenho duas mãos.": "marta_frase_013.mp3",
+      "Escolhe uma aventura!": "marta_instrucao_001.mp3",
+      "Muito bem!": "marta_instrucao_002.mp3",
+      "Tenta novamente!": "marta_instrucao_003.mp3",
+      "Vamos jogar!": "marta_instrucao_004.mp3",
+      "Vamos aprender!": "marta_instrucao_005.mp3",
+      "Vamos ouvir uma história!": "marta_instrucao_006.mp3",
+      "Toca na resposta certa.": "marta_instrucao_007.mp3",
+      "Escuta e repete.": "marta_instrucao_008.mp3",
+      "Pronto para começar?": "marta_instrucao_009.mp3",
+      "Parabéns!": "marta_instrucao_010.mp3"
     },
     "male": {
       "Maçã": "vasco_palavra_001.mp3",
@@ -144,7 +154,17 @@
       "O sol é amarelo.": "vasco_frase_010.mp3",
       "Vejo um carro.": "vasco_frase_011.mp3",
       "Está a chover.": "vasco_frase_012.mp3",
-      "Tenho duas mãos.": "vasco_frase_013.mp3"
+      "Tenho duas mãos.": "vasco_frase_013.mp3",
+      "Escolhe uma aventura!": "vasco_instrucao_001.mp3",
+      "Muito bem!": "vasco_instrucao_002.mp3",
+      "Tenta novamente!": "vasco_instrucao_003.mp3",
+      "Vamos jogar!": "vasco_instrucao_004.mp3",
+      "Vamos aprender!": "vasco_instrucao_005.mp3",
+      "Vamos ouvir uma história!": "vasco_instrucao_006.mp3",
+      "Toca na resposta certa.": "vasco_instrucao_007.mp3",
+      "Escuta e repete.": "vasco_instrucao_008.mp3",
+      "Pronto para começar?": "vasco_instrucao_009.mp3",
+      "Parabéns!": "vasco_instrucao_010.mp3"
     }
   },
   "en-US": {
@@ -219,7 +239,17 @@
       "The sun is yellow.": "sarah_frase_010.mp3",
       "I see a car.": "sarah_frase_011.mp3",
       "It is raining.": "sarah_frase_012.mp3",
-      "I have two hands.": "sarah_frase_013.mp3"
+      "I have two hands.": "sarah_frase_013.mp3",
+      "Choose an adventure!": "sarah_instrucao_001.mp3",
+      "Well done!": "sarah_instrucao_002.mp3",
+      "Try again!": "sarah_instrucao_003.mp3",
+      "Let's play!": "sarah_instrucao_004.mp3",
+      "Let's learn!": "sarah_instrucao_005.mp3",
+      "Let's listen to a story!": "sarah_instrucao_006.mp3",
+      "Tap the correct answer.": "sarah_instrucao_007.mp3",
+      "Listen and repeat.": "sarah_instrucao_008.mp3",
+      "Ready to begin?": "sarah_instrucao_009.mp3",
+      "Congratulations!": "sarah_instrucao_010.mp3"
     },
     "male": {
       "Apple": "quentin_palavra_001.mp3",
@@ -292,7 +322,17 @@
       "The sun is yellow.": "quentin_frase_010.mp3",
       "I see a car.": "quentin_frase_011.mp3",
       "It is raining.": "quentin_frase_012.mp3",
-      "I have two hands.": "quentin_frase_013.mp3"
+      "I have two hands.": "quentin_frase_013.mp3",
+      "Choose an adventure!": "quentin_instrucao_001.mp3",
+      "Well done!": "quentin_instrucao_002.mp3",
+      "Try again!": "quentin_instrucao_003.mp3",
+      "Let's play!": "quentin_instrucao_004.mp3",
+      "Let's learn!": "quentin_instrucao_005.mp3",
+      "Let's listen to a story!": "quentin_instrucao_006.mp3",
+      "Tap the correct answer.": "quentin_instrucao_007.mp3",
+      "Listen and repeat.": "quentin_instrucao_008.mp3",
+      "Ready to begin?": "quentin_instrucao_009.mp3",
+      "Congratulations!": "quentin_instrucao_010.mp3"
     }
   }
 }
