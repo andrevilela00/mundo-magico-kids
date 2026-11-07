@@ -1,0 +1,81 @@
+vasco_palavra_001.mp3 | Maçã
+vasco_palavra_002.mp3 | Banana
+vasco_palavra_003.mp3 | Pão
+vasco_palavra_004.mp3 | Leite
+vasco_palavra_005.mp3 | Cão
+vasco_palavra_006.mp3 | Gato
+vasco_palavra_007.mp3 | Peixe
+vasco_palavra_008.mp3 | Pássaro
+vasco_palavra_009.mp3 | Carro
+vasco_palavra_010.mp3 | Casa
+vasco_palavra_011.mp3 | Livro
+vasco_palavra_012.mp3 | Bola
+vasco_palavra_013.mp3 | Sol
+vasco_palavra_014.mp3 | Lua
+vasco_palavra_015.mp3 | Árvore
+vasco_palavra_016.mp3 | Flor
+vasco_palavra_017.mp3 | Cavalo
+vasco_palavra_018.mp3 | Coelho
+vasco_palavra_019.mp3 | Vaca
+vasco_palavra_020.mp3 | Pato
+vasco_palavra_021.mp3 | Queijo
+vasco_palavra_022.mp3 | Ovo
+vasco_palavra_023.mp3 | Água
+vasco_palavra_024.mp3 | Morango
+vasco_palavra_025.mp3 | Vermelho
+vasco_palavra_026.mp3 | Azul
+vasco_palavra_027.mp3 | Verde
+vasco_palavra_028.mp3 | Amarelo
+vasco_palavra_029.mp3 | Laranja
+vasco_palavra_030.mp3 | Roxo
+vasco_palavra_031.mp3 | Preto
+vasco_palavra_032.mp3 | Branco
+vasco_palavra_033.mp3 | Olá
+vasco_palavra_034.mp3 | Adeus
+vasco_palavra_035.mp3 | Bom dia
+vasco_palavra_036.mp3 | Boa noite
+vasco_palavra_037.mp3 | Obrigado
+vasco_palavra_038.mp3 | Por favor
+vasco_palavra_039.mp3 | Sim
+vasco_palavra_040.mp3 | Não
+vasco_palavra_041.mp3 | Bicicleta
+vasco_palavra_042.mp3 | Comboio
+vasco_palavra_043.mp3 | Relógio
+vasco_palavra_044.mp3 | Telefone
+vasco_palavra_045.mp3 | Estrela
+vasco_palavra_046.mp3 | Arco-íris
+vasco_palavra_047.mp3 | Nuvem
+vasco_palavra_048.mp3 | Chuva
+vasco_palavra_049.mp3 | Um
+vasco_palavra_050.mp3 | Dois
+vasco_palavra_051.mp3 | Três
+vasco_palavra_052.mp3 | Quatro
+vasco_palavra_053.mp3 | Cinco
+vasco_palavra_054.mp3 | Seis
+vasco_palavra_055.mp3 | Sete
+vasco_palavra_056.mp3 | Oito
+vasco_palavra_057.mp3 | Nove
+vasco_palavra_058.mp3 | Dez
+vasco_frase_001.mp3 | Olá!
+vasco_frase_002.mp3 | Como estás?
+vasco_frase_003.mp3 | Chamo-me...
+vasco_frase_004.mp3 | Bom dia!
+vasco_frase_005.mp3 | Boa noite!
+vasco_frase_006.mp3 | Obrigado!
+vasco_frase_007.mp3 | Até breve!
+vasco_frase_008.mp3 | Gosto de maçãs.
+vasco_frase_009.mp3 | Adoro animais.
+vasco_frase_010.mp3 | O sol é amarelo.
+vasco_frase_011.mp3 | Vejo um carro.
+vasco_frase_012.mp3 | Está a chover.
+vasco_frase_013.mp3 | Tenho duas mãos.
+vasco_instrucao_001.mp3 | Escolhe uma aventura!
+vasco_instrucao_002.mp3 | Muito bem!
+vasco_instrucao_003.mp3 | Tenta novamente!
+vasco_instrucao_004.mp3 | Vamos jogar!
+vasco_instrucao_005.mp3 | Vamos aprender!
+vasco_instrucao_006.mp3 | Vamos ouvir uma história!
+vasco_instrucao_007.mp3 | Toca na resposta certa.
+vasco_instrucao_008.mp3 | Escuta e repete.
+vasco_instrucao_009.mp3 | Pronto para começar?
+vasco_instrucao_010.mp3 | Parabéns!

@@ -1,0 +1,81 @@
+quentin_palavra_001.mp3 | Apple
+quentin_palavra_002.mp3 | Banana
+quentin_palavra_003.mp3 | Bread
+quentin_palavra_004.mp3 | Milk
+quentin_palavra_005.mp3 | Dog
+quentin_palavra_006.mp3 | Cat
+quentin_palavra_007.mp3 | Fish
+quentin_palavra_008.mp3 | Bird
+quentin_palavra_009.mp3 | Car
+quentin_palavra_010.mp3 | House
+quentin_palavra_011.mp3 | Book
+quentin_palavra_012.mp3 | Ball
+quentin_palavra_013.mp3 | Sun
+quentin_palavra_014.mp3 | Moon
+quentin_palavra_015.mp3 | Tree
+quentin_palavra_016.mp3 | Flower
+quentin_palavra_017.mp3 | Horse
+quentin_palavra_018.mp3 | Rabbit
+quentin_palavra_019.mp3 | Cow
+quentin_palavra_020.mp3 | Duck
+quentin_palavra_021.mp3 | Cheese
+quentin_palavra_022.mp3 | Egg
+quentin_palavra_023.mp3 | Water
+quentin_palavra_024.mp3 | Strawberry
+quentin_palavra_025.mp3 | Red
+quentin_palavra_026.mp3 | Blue
+quentin_palavra_027.mp3 | Green
+quentin_palavra_028.mp3 | Yellow
+quentin_palavra_029.mp3 | Orange
+quentin_palavra_030.mp3 | Purple
+quentin_palavra_031.mp3 | Black
+quentin_palavra_032.mp3 | White
+quentin_palavra_033.mp3 | Hello
+quentin_palavra_034.mp3 | Goodbye
+quentin_palavra_035.mp3 | Good morning
+quentin_palavra_036.mp3 | Good night
+quentin_palavra_037.mp3 | Thank you
+quentin_palavra_038.mp3 | Please
+quentin_palavra_039.mp3 | Yes
+quentin_palavra_040.mp3 | No
+quentin_palavra_041.mp3 | Bicycle
+quentin_palavra_042.mp3 | Train
+quentin_palavra_043.mp3 | Clock
+quentin_palavra_044.mp3 | Phone
+quentin_palavra_045.mp3 | Star
+quentin_palavra_046.mp3 | Rainbow
+quentin_palavra_047.mp3 | Cloud
+quentin_palavra_048.mp3 | Rain
+quentin_palavra_049.mp3 | One
+quentin_palavra_050.mp3 | Two
+quentin_palavra_051.mp3 | Three
+quentin_palavra_052.mp3 | Four
+quentin_palavra_053.mp3 | Five
+quentin_palavra_054.mp3 | Six
+quentin_palavra_055.mp3 | Seven
+quentin_palavra_056.mp3 | Eight
+quentin_palavra_057.mp3 | Nine
+quentin_palavra_058.mp3 | Ten
+quentin_frase_001.mp3 | Hello!
+quentin_frase_002.mp3 | How are you?
+quentin_frase_003.mp3 | My name is...
+quentin_frase_004.mp3 | Good morning!
+quentin_frase_005.mp3 | Good night!
+quentin_frase_006.mp3 | Thank you!
+quentin_frase_007.mp3 | See you soon!
+quentin_frase_008.mp3 | I like apples.
+quentin_frase_009.mp3 | I love animals.
+quentin_frase_010.mp3 | The sun is yellow.
+quentin_frase_011.mp3 | I see a car.
+quentin_frase_012.mp3 | It is raining.
+quentin_frase_013.mp3 | I have two hands.
+quentin_instrucao_001.mp3 | Choose an adventure!
+quentin_instrucao_002.mp3 | Well done!
+quentin_instrucao_003.mp3 | Try again!
+quentin_instrucao_004.mp3 | Let's play!
+quentin_instrucao_005.mp3 | Let's learn!
+quentin_instrucao_006.mp3 | Let's listen to a story!
+quentin_instrucao_007.mp3 | Tap the correct answer.
+quentin_instrucao_008.mp3 | Listen and repeat.
+quentin_instrucao_009.mp3 | Ready to begin?
+quentin_instrucao_010.mp3 | Congratulations!

@@ -1,0 +1,81 @@
+sarah_palavra_001.mp3 | Apple
+sarah_palavra_002.mp3 | Banana
+sarah_palavra_003.mp3 | Bread
+sarah_palavra_004.mp3 | Milk
+sarah_palavra_005.mp3 | Dog
+sarah_palavra_006.mp3 | Cat
+sarah_palavra_007.mp3 | Fish
+sarah_palavra_008.mp3 | Bird
+sarah_palavra_009.mp3 | Car
+sarah_palavra_010.mp3 | House
+sarah_palavra_011.mp3 | Book
+sarah_palavra_012.mp3 | Ball
+sarah_palavra_013.mp3 | Sun
+sarah_palavra_014.mp3 | Moon
+sarah_palavra_015.mp3 | Tree
+sarah_palavra_016.mp3 | Flower
+sarah_palavra_017.mp3 | Horse
+sarah_palavra_018.mp3 | Rabbit
+sarah_palavra_019.mp3 | Cow
+sarah_palavra_020.mp3 | Duck
+sarah_palavra_021.mp3 | Cheese
+sarah_palavra_022.mp3 | Egg
+sarah_palavra_023.mp3 | Water
+sarah_palavra_024.mp3 | Strawberry
+sarah_palavra_025.mp3 | Red
+sarah_palavra_026.mp3 | Blue
+sarah_palavra_027.mp3 | Green
+sarah_palavra_028.mp3 | Yellow
+sarah_palavra_029.mp3 | Orange
+sarah_palavra_030.mp3 | Purple
+sarah_palavra_031.mp3 | Black
+sarah_palavra_032.mp3 | White
+sarah_palavra_033.mp3 | Hello
+sarah_palavra_034.mp3 | Goodbye
+sarah_palavra_035.mp3 | Good morning
+sarah_palavra_036.mp3 | Good night
+sarah_palavra_037.mp3 | Thank you
+sarah_palavra_038.mp3 | Please
+sarah_palavra_039.mp3 | Yes
+sarah_palavra_040.mp3 | No
+sarah_palavra_041.mp3 | Bicycle
+sarah_palavra_042.mp3 | Train
+sarah_palavra_043.mp3 | Clock
+sarah_palavra_044.mp3 | Phone
+sarah_palavra_045.mp3 | Star
+sarah_palavra_046.mp3 | Rainbow
+sarah_palavra_047.mp3 | Cloud
+sarah_palavra_048.mp3 | Rain
+sarah_palavra_049.mp3 | One
+sarah_palavra_050.mp3 | Two
+sarah_palavra_051.mp3 | Three
+sarah_palavra_052.mp3 | Four
+sarah_palavra_053.mp3 | Five
+sarah_palavra_054.mp3 | Six
+sarah_palavra_055.mp3 | Seven
+sarah_palavra_056.mp3 | Eight
+sarah_palavra_057.mp3 | Nine
+sarah_palavra_058.mp3 | Ten
+sarah_frase_001.mp3 | Hello!
+sarah_frase_002.mp3 | How are you?
+sarah_frase_003.mp3 | My name is...
+sarah_frase_004.mp3 | Good morning!
+sarah_frase_005.mp3 | Good night!
+sarah_frase_006.mp3 | Thank you!
+sarah_frase_007.mp3 | See you soon!
+sarah_frase_008.mp3 | I like apples.
+sarah_frase_009.mp3 | I love animals.
+sarah_frase_010.mp3 | The sun is yellow.
+sarah_frase_011.mp3 | I see a car.
+sarah_frase_012.mp3 | It is raining.
+sarah_frase_013.mp3 | I have two hands.
+sarah_instrucao_001.mp3 | Choose an adventure!
+sarah_instrucao_002.mp3 | Well done!
+sarah_instrucao_003.mp3 | Try again!
+sarah_instrucao_004.mp3 | Let's play!
+sarah_instrucao_005.mp3 | Let's learn!
+sarah_instrucao_006.mp3 | Let's listen to a story!
+sarah_instrucao_007.mp3 | Tap the correct answer.
+sarah_instrucao_008.mp3 | Listen and repeat.
+sarah_instrucao_009.mp3 | Ready to begin?
+sarah_instrucao_010.mp3 | Congratulations!

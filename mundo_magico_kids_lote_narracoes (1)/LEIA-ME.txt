@@ -1,0 +1,20 @@
+MUNDO MÁGICO KIDS — LOTE DE NARRAÇÕES
+
+Este pacote contém TEXTOS e NOMES DOS FICHEIROS A GERAR. Não contém os MP3 novos.
+
+Narradores:
+Marta: pt-PT feminina
+Vasco: pt-PT masculina
+Sarah: en-US feminina
+Quentin: en-US masculina
+
+1. Gerar cada texto na ElevenLabs com a voz indicada em lista_completa.csv.
+2. Guardar cada MP3 com o nome exato indicado na coluna ficheiro_mp3.
+3. Carregar os MP3 e vocabulary_manifest.json para:
+   mundo_magico_kids_vozes_pt_en/audio/
+4. O código da aplicação v2.0.6+ já consulta vocabulary_manifest.json para palavras e frases.
+5. As instruções são conteúdo preparado para uma fase seguinte; ainda não estão ligadas a todos os eventos.
+6. A aplicação usa a voz do dispositivo para ficheiros ainda não publicados.
+7. Não colocar chaves de API no GitHub. Confirmar licenças de utilização das vozes.
+
+Nota: palavras e frases iguais no texto (ex.: Hello / Hello!) têm nomes de ficheiro separados.
