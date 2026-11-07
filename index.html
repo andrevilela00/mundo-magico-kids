@@ -1122,22 +1122,39 @@ englishWords.push(...[{"en":"Horse","pt":"Cavalo","emoji":"🐴","cat":"animals"
 let vocabularyAudioManifest={};
 fetch("./mundo_magico_kids_vozes_pt_en/audio/vocabulary_manifest.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(data=>{vocabularyAudioManifest=data&&typeof data==="object"?data:{}}).catch(()=>{});
 function speakVocabulary(str){
- stopVoice();const serial=speechSerial;
- const targetLang=miniMode==="portuguese"?"pt-PT":"en-US";
+ stopVoice();
+ const serial=speechSerial;
+ const targetLang=miniMode==="portuguese"?"pt-PT":"en-GB";
  const key=String(str).normalize("NFC").trim();
- const filename=vocabularyAudioManifest?.[targetLang]?.[voiceGender]?.[key];
+ const filename=vocabularyAudioManifest?.[targetLang]?.[voiceGender]?.[key]
+   ||vocabularyAudioManifest?.["en-US"]?.[voiceGender]?.[key];
+ let fallbackStarted=false;
  function deviceFallback(){
-  if(serial!==speechSerial||!("speechSynthesis" in window))return;
-  const u=new SpeechSynthesisUtterance(str);u.lang=targetLang;u.rate=.78;u.pitch=1.05;u.volume=narrationVolume;
-  const voices=speechSynthesis.getVoices();const matches=voices.filter(v=>v.lang.toLowerCase()===targetLang.toLowerCase());
+  if(fallbackStarted||serial!==speechSerial||!("speechSynthesis" in window))return;
+  fallbackStarted=true;
+  const synth=window.speechSynthesis;
+  const u=new SpeechSynthesisUtterance(key);
+  u.lang=targetLang;u.rate=.78;u.pitch=1.05;u.volume=narrationVolume;
+  const voices=synth.getVoices();
+  const matches=voices.filter(v=>v.lang.toLowerCase()===targetLang.toLowerCase());
+  const sameLanguage=voices.filter(v=>v.lang.toLowerCase().startsWith(targetLang.slice(0,2).toLowerCase()));
   const pattern=voiceNames[targetLang]?.[voiceGender];
-  u.voice=matches.find(v=>v.name===deviceVoiceName)||(pattern&&matches.find(v=>pattern.test(v.name)))||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
-  speechSynthesis.speak(u);
+  u.voice=matches.find(v=>v.name===deviceVoiceName)
+   ||(pattern&&matches.find(v=>pattern.test(v.name)))
+   ||matches[0]||sameLanguage[0]||null;
+  // Safari can have an empty voice list until voiceschanged fires.
+  // The utterance language remains set even if no matching installed voice exists.
+  try{
+   synth.cancel();
+   synth.resume();
+   synth.speak(u);
+  }catch(error){console.warn("Vocabulary speech unavailable",error)}
  }
  if(typeof filename==="string"&&/^[a-zA-Z0-9_-]+\\.mp3$/.test(filename)){
   audioPlayer.src=narratorAudioRoot+filename;
   audioPlayer.onerror=()=>{if(serial===speechSerial)deviceFallback()};
-  const p=audioPlayer.play();if(p&&p.catch)p.catch(()=>{if(serial===speechSerial)deviceFallback()});
+  const p=audioPlayer.play();
+  if(p&&typeof p.catch==="function")p.catch(()=>{if(serial===speechSerial)deviceFallback()});
  }else deviceFallback();
 }
 
