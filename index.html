@@ -237,6 +237,8 @@ main{max-width:790px}
 #activity.storybook #choices{margin-top:14px}
 #activity.storybook .choice{min-height:56px}
 @media(max-width:400px){.story-nav{gap:6px}.story-nav button{min-width:110px;font-size:13px;padding:10px 7px}}
+
+.story-volume,.volume-setting{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff8e8;border-radius:16px;padding:12px;margin:10px 0}.story-volume label,.volume-setting label{font-weight:700}.story-volume input[type=range],.volume-setting input[type=range]{flex:1;min-width:110px;accent-color:#7046cc;min-height:36px}.story-volume output,.volume-setting output{font-weight:800;min-width:45px;text-align:right}
 </style>
 </head>
 <body>
@@ -278,7 +280,7 @@ main{max-width:790px}
 <section id="activity" class="card hidden">
 <button onclick="goHome()">⌂ Início / Home</button>
 <h2 id="activityTitle"></h2>
-<p id="progress" aria-live="polite"></p><div id="storyNav" class="story-nav hidden"><button type="button" id="storyBack" onclick="previousStoryPage()">← Página anterior</button><button type="button" id="storyReplay" onclick="speakCurrent()">🔊 Ouvir página</button></div><div id="storyPageProgress" class="story-page-progress hidden" aria-label="Progresso da história"></div>
+<p id="progress" aria-live="polite"></p><div id="storyNav" class="story-nav hidden"><button type="button" id="storyBack" onclick="previousStoryPage()">← Página anterior</button><button type="button" id="storyReplay" onclick="speakCurrent()">🔊 Ouvir página</button></div><div id="storyVolume" class="story-volume hidden"><label for="storyVolumeSlider">🔉 <span id="storyVolumeText">Volume da narração</span></label><input id="storyVolumeSlider" type="range" min="0" max="100" step="5" value="100" oninput="setNarrationVolume(this.value)"><output id="storyVolumeValue">100%</output></div><div id="storyPageProgress" class="story-page-progress hidden" aria-label="Progresso da história"></div>
 <div class="emoji" id="picture"></div>
 <p id="content"></p>
 <button onclick="speakCurrent()">🔊 Ouvir / Listen</button>
@@ -293,7 +295,7 @@ main{max-width:790px}
 <h2 id="parentTitle">⚙️ Definições dos pais</h2>
 <p id="parentNotice">Preferências locais de demonstração. Ainda não existe PIN seguro nem controlo de tempo.</p>
 <label><input type="checkbox" id="autoNarration" onchange="saveNarration()"> <span id="autoLabel">Narração automática</span></label>
-<div id="voicePanel" style="border:3px solid #7046cc;background:#fff4ce;border-radius:18px;padding:16px;margin:16px 0"><h3 style="margin:0 0 10px">🎙️ <span id="voiceHeading">Escolher voz</span></h3><p><label id="voiceLabel" for="voiceGender">Voz da narração</label><br>
+<div class="volume-setting"><label for="narrationVolumeSlider">🔊 <span id="narrationVolumeText">Volume da narração</span></label><input id="narrationVolumeSlider" type="range" min="0" max="100" step="5" value="100" oninput="setNarrationVolume(this.value)"><output id="narrationVolumeValue">100%</output><p id="volumeHelp" style="font-size:13px">No iPhone, o Safari pode exigir os botões físicos de volume para controlar a voz e os MP3.</p></div><div id="voicePanel" style="border:3px solid #7046cc;background:#fff4ce;border-radius:18px;padding:16px;margin:16px 0"><h3 style="margin:0 0 10px">🎙️ <span id="voiceHeading">Escolher voz</span></h3><p><label id="voiceLabel" for="voiceGender">Voz da narração</label><br>
 <select id="voiceGender" onchange="saveVoicePreference()" style="width:100%;margin-top:8px;background:#eee4ff;color:#40236d">
 <option id="voiceFemale" value="female">Voz feminina</option><option id="voiceMale" value="male">Voz masculina</option>
 </select></p>
@@ -304,7 +306,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.1.2 · Sem publicidade</footer>
+<footer>Versão de testes 2.1.3 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -312,6 +314,14 @@ let points=Number(localStorage.getItem("mmk_points")||0);
 let mode="",step=0,selected=false,currentSpeech="",currentClip="";
 const audioPlayer=new Audio();audioPlayer.preload="auto";
 let recordedClips={};let speechSerial=0;
+let narrationVolume=Math.max(0,Math.min(1,Number(localStorage.getItem("mmk_narration_volume")??"1")||0));
+function setNarrationVolume(value){
+ narrationVolume=Math.max(0,Math.min(1,Number(value)/100));localStorage.setItem("mmk_narration_volume",String(narrationVolume));audioPlayer.volume=narrationVolume;
+ const preview=document.getElementById("narratorPreview");if(preview)preview.volume=narrationVolume;
+ for(const id of ["storyVolumeSlider","narrationVolumeSlider"]){const el=document.getElementById(id);if(el)el.value=Math.round(narrationVolume*100)}
+ for(const id of ["storyVolumeValue","narrationVolumeValue"]){const el=document.getElementById(id);if(el)el.textContent=Math.round(narrationVolume*100)+"%"}
+}
+
 fetch("./audio/manifest.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(x=>{recordedClips=x&&typeof x==="object"?x:{}}).catch(()=>{});
 let autoNarration=localStorage.getItem("mmk_auto")!=="false";
 let effectsOn=localStorage.getItem("mmk_effects")!=="false";
@@ -421,7 +431,7 @@ function fallback(){
 if(serial!==speechSerial||!("speechSynthesis" in window))return;
 const storyNarration=mode==="story"&&/^story-\\d+-question$/.test(String(clipKey||""));
 const u=new SpeechSynthesisUtterance(storyNarration?spoken.replace(/([.!?])\\s+/g,"$1  ").replace(/([:;])\\s+/g,"$1  "):spoken);
-u.lang=lang;u.rate=storyNarration?(lang==="pt-PT"?.88:.92):1;u.pitch=storyNarration?1:1.06;
+u.lang=lang;u.rate=storyNarration?(lang==="pt-PT"?.88:.92):1;u.pitch=storyNarration?1:1.06;u.volume=narrationVolume;
 const voices=speechSynthesis.getVoices();
 const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
 u.voice=matches.find(v=>v.name===deviceVoiceName)||preferredVoice(voices)||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
@@ -440,7 +450,7 @@ function updateNarratorPreview(){
  const file=lang==="pt-PT"?(voiceGender==="male"?"vasco_demo.mp3":"marta_demo.mp3"):(voiceGender==="male"?"quentin_demo.mp3":"sarah_demo.mp3");
  const audio=$("narratorPreview");
  if(!audio)return;
- audio.pause();audio.src=narratorAudioRoot+file;audio.load();
+ audio.pause();audio.src=narratorAudioRoot+file;audio.volume=narrationVolume;audio.load();
  $("narratorStatus").textContent=(lang==="pt-PT"?"Amostra: ":"Sample: ")+file.replace("_demo.mp3","");
 }
 function playWelcomeNarration(){
@@ -460,7 +470,7 @@ function testNarrator(){
 }
 function speakCurrent(){say(currentSpeech,currentClip)}
 function autoSpeak(){if(autoNarration)say(currentSpeech,currentClip)}
-function openSettings(){stopSpeechCheck();stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("mini").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("speechCheckToggle").checked=speechCheckEnabled;$("voiceGender").value=voiceGender;updateVoiceAvailability();updateNarratorPreview();window.scrollTo(0,0)}
+function openSettings(){setNarrationVolume(narrationVolume*100);$("narrationVolumeText").textContent=lang==="pt-PT"?"Volume da narração":"Narration volume";$("volumeHelp").textContent=lang==="pt-PT"?"No iPhone, o Safari pode exigir os botões físicos de volume para controlar a voz e os MP3.":"On iPhone, Safari may require the physical volume buttons to control speech and MP3 audio.";stopSpeechCheck();stopVoice();$("home").classList.add("hidden");$("activity").classList.add("hidden");$("creative").classList.add("hidden");$("mini").classList.add("hidden");$("settings").classList.remove("hidden");$("autoNarration").checked=autoNarration;$("effectsToggle").checked=effectsOn;$("speechCheckToggle").checked=speechCheckEnabled;$("voiceGender").value=voiceGender;updateVoiceAvailability();updateNarratorPreview();window.scrollTo(0,0)}
 function saveEffects(){effectsOn=$("effectsToggle").checked;localStorage.setItem("mmk_effects",String(effectsOn))}
 function saveSpeechCheck(){speechCheckEnabled=$("speechCheckToggle").checked;localStorage.setItem("mmk_speech_check",String(speechCheckEnabled));if(!speechCheckEnabled)stopSpeechCheck()}
 function saveNarration(){autoNarration=$("autoNarration").checked;localStorage.setItem("mmk_auto",String(autoNarration))}
@@ -518,6 +528,7 @@ $("picture").classList.remove("correct-pop");
 $("next").classList.add("hidden");
 $("message").textContent="";
 const data=mode==="game"?questions:mode==="learn"?learnQuestions:story;
+const storyVolume=$("storyVolume");storyVolume.classList.toggle("hidden",mode!=="story"||step>=story.length);$("storyVolumeText").textContent=lang==="pt-PT"?"Volume da narração":"Narration volume";
 const storyNav=$("storyNav");storyNav.classList.toggle("hidden",mode!=="story"||step>=story.length);
 if(mode==="story"&&step<story.length){$("storyBack").disabled=step===0;$("storyBack").textContent=lang==="pt-PT"?"← Página anterior":"← Previous page";$("storyReplay").textContent=lang==="pt-PT"?"🔊 Ouvir página":"🔊 Listen to page"}
 const storyProgress=$("storyPageProgress");storyProgress.classList.toggle("hidden",mode!=="story"||step>=story.length);
@@ -693,7 +704,7 @@ function speakVocabulary(str){
  const filename=vocabularyAudioManifest?.[targetLang]?.[voiceGender]?.[key];
  function deviceFallback(){
   if(serial!==speechSerial||!("speechSynthesis" in window))return;
-  const u=new SpeechSynthesisUtterance(str);u.lang=targetLang;u.rate=.78;u.pitch=1.05;
+  const u=new SpeechSynthesisUtterance(str);u.lang=targetLang;u.rate=.78;u.pitch=1.05;u.volume=narrationVolume;
   const voices=speechSynthesis.getVoices();const matches=voices.filter(v=>v.lang.toLowerCase()===targetLang.toLowerCase());
   const pattern=voiceNames[targetLang]?.[voiceGender];
   u.voice=matches.find(v=>v.name===deviceVoiceName)||(pattern&&matches.find(v=>pattern.test(v.name)))||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
@@ -749,6 +760,7 @@ progressObserver.observe($("miniBoard"),{childList:true});
 $("lang").value=lang;
 $("total").textContent=points;
 changeLanguage();
+setNarrationVolume(narrationVolume*100);
 </script>
 </body>
 </html>
