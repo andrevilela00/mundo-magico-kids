@@ -304,7 +304,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.1.1 · Sem publicidade</footer>
+<footer>Versão de testes 2.1.2 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -419,8 +419,9 @@ const educationalFile=vocabularyAudioManifest?.[lang]?.[voiceGender]?.[spoken];
 const file=recordedFile||educationalFile;
 function fallback(){
 if(serial!==speechSerial||!("speechSynthesis" in window))return;
-const u=new SpeechSynthesisUtterance(spoken);
-u.lang=lang;u.rate=1;u.pitch=1.06;
+const storyNarration=mode==="story"&&/^story-\\d+-question$/.test(String(clipKey||""));
+const u=new SpeechSynthesisUtterance(storyNarration?spoken.replace(/([.!?])\\s+/g,"$1  ").replace(/([:;])\\s+/g,"$1  "):spoken);
+u.lang=lang;u.rate=storyNarration?(lang==="pt-PT"?.88:.92):1;u.pitch=storyNarration?1:1.06;
 const voices=speechSynthesis.getVoices();
 const matches=voices.filter(v=>v.lang.toLowerCase()===lang.toLowerCase());
 u.voice=matches.find(v=>v.name===deviceVoiceName)||preferredVoice(voices)||matches.find(v=>/premium|enhanced|natural/i.test(v.name))||matches[0]||null;
