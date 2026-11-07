@@ -413,7 +413,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.4.5 · Sem publicidade</footer>
+<footer>Versão de testes 2.4.6 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -692,13 +692,14 @@ star(750,84,changed(0)?"#f69fca":"#ffe17c"),
 '<g transform="translate(742 342)">'+circle(0,0,62,changed(3)?"#9dcae8":"#e9b38e")+circle(-25,-17,17,"#c68d7b")+circle(22,19,23,"#c68d7b")+circle(31,-27,10,"#c68d7b")+'</g>',
 '<g transform="translate(130 343)">'+ellipse(0,0,71,27,changed(4)?"#e7a6d9":"#8bd8b7")+circle(0,-16,30,"#b4f0e5")+circle(-26,1,6,"#fff3b1")+circle(0,5,6,"#fff3b1")+circle(26,1,6,"#fff3b1")+'</g>'];
 }else{ // winter
-background='<rect width="900" height="450" fill="#c8e9fc"/>'+cloud(220,85)+cloud(580,62)+path("M0 270Q200 190 400 260T900 245V450H0Z","#e5f4fb")+path("M0 370Q260 280 500 345T900 330V450H0Z","#f6fcff")+Array.from({length:20},(_,i)=>circle((i*89+40)%900,(i*47+10)%260,3+i%4,"#fff")).join("");
+background='<rect width="900" height="450" fill="#c8e9fc"/>'+cloud(220,85)+cloud(580,62)+path("M0 270Q200 190 400 260T900 245V450H0Z","#e5f4fb")+path("M0 370Q260 280 500 345T900 330V450H0Z","#f6fcff");
 objects=[
-'<g>'+circle(739,90,47,changed(0)?"#d5b3ef":"#ffebaa")+circle(725,87,5,"#67585a")+circle(755,87,5,"#67585a")+path("M722 104q17 14 34 0","none","#67585a",4)+'</g>',
-'<g transform="translate(249 177)">'+path("M-65 95L0-99 65 95Z",changed(1)?"#9a8cdd":"#4f9f88","#397c78",6)+path("M-49 44H49M-35-2H35","none","#e8f8ff",12)+path("M-13 95v37h26V95Z","#986f59")+'</g>',
+circle(739,90,47,changed(0)?"#d5b3ef":"#ffebaa"),
+'<g transform="translate(249 177)">'+path("M-65 95L0-99 65 95Z",changed(1)?"#9a8cdd":"#4f9f88","#397c78",6)+path("M-49 44H49M-35-2H35","none","#e8f8ff",12)+'</g>',
 snowman(462,290),
-'<g transform="translate(741 342)">'+path("M-80 45V-30L0-98 80-30V45Z",changed(3)?"#a8a2d7":"#d88e74","#a7746a",6)+path("M-95-30L0-117 95-30Z","#8e6689")+path("M-21 45V-13h42v58Z","#805e67")+circle(11,14,4,"#ffe8b0")+'</g>',
-'<g transform="translate(134 350)">'+path("M-47 0q47-72 94 0v48h-94Z",changed(4)?"#d6a0df":"#eb6c7c","#b34e63",5)+path("M-40 0q40 16 80 0","none","#fff4df",7)+circle(0,22,7,"#fff4df")+'</g>'];
+'<g transform="translate(741 342)">'+path("M-80 45V-30L0-98 80-30V45Z",changed(3)?"#a8a2d7":"#d88e74","#a7746a",6)+path("M-95-30L0-117 95-30Z","#8e6689")+'</g>',
+'<g transform="translate(134 350)">'+path("M-47 0q47-72 94 0v48h-94Z",changed(4)?"#d6a0df":"#eb6c7c","#b34e63",5)+circle(0,22,7,"#fff4df")+'</g>'];
+}
 if(scene===5&&changed(2))objects[2]=snowman(462,290).replace('fill="#4b5c9d"','fill="#e77f9c"').replace('fill="#4b5c9d"','fill="#e77f9c"');
 return '<svg viewBox="0 0 900 450" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="diff-illustration"><defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'+background+objects.join("")+'<rect width="900" height="450" fill="url(#'+uid+')" pointer-events="none"/></svg>';
 }
