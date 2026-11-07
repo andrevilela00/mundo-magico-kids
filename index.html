@@ -300,6 +300,9 @@ main{max-width:790px}
 #activity button,#mini button,#creative button,#world button,#trophies button{touch-action:manipulation}#activity button:focus-visible,#mini button:focus-visible,#creative button:focus-visible,#world button:focus-visible,#trophies button:focus-visible{outline:3px solid #f5a73d;outline-offset:3px}
 .world-item,.trophy-card,.home-big-path{border-radius:var(--mmk-radius)}
 @media(max-width:520px){#home .hero-fox{width:77px;height:85px;flex:0 0 77px}#home .hero-fox .lili-vector{width:76px;height:84px}.world-heading{padding-right:75px}.world-lili{width:67px;height:76px}.world-lili .lili-vector{width:65px;height:74px}}
+
+/* Storybook original illustrations */
+#activity.storybook #picture{padding:0;min-height:0;overflow:hidden;display:block;background:#d8edff;line-height:0;border:5px solid #fff;box-shadow:0 9px 25px #4d5d8d2b;aspect-ratio:640/350}#activity.storybook .story-illustration{display:block;width:100%;height:100%;max-height:420px;animation:storySceneIn .5s ease-out}#activity.storybook .story-lili{width:120px;height:130px;filter:drop-shadow(0 7px 4px #75553e55)}#activity.storybook .story-landscape{transform-origin:center;animation:storyLandscapeIn .7s ease-out}#activity.storybook #content{max-width:750px;margin:19px auto;padding:0 6px}@keyframes storySceneIn{from{opacity:.55}to{opacity:1}}@keyframes storyLandscapeIn{from{transform:scale(1.025)}to{transform:scale(1)}}@media(prefers-reduced-motion:reduce){#activity.storybook .story-illustration,#activity.storybook .story-landscape{animation:none}}
 </style>
 </head>
 <body>
@@ -368,7 +371,7 @@ main{max-width:790px}
 </section>
 </main>
 <div id="celebration" aria-hidden="true"></div>
-<footer>Versão de testes 2.2.6 · Sem publicidade</footer>
+<footer>Versão de testes 2.2.7 · Sem publicidade</footer>
 <script>
 const $=id=>document.getElementById(id);
 let lang=localStorage.getItem("mmk_lang")||"pt-PT";if(lang==="en-GB"){lang="en-US";localStorage.setItem("mmk_lang",lang)}
@@ -611,6 +614,47 @@ $("mini").classList.add("hidden");
 $("activity").classList.remove("hidden");
 render();
 }
+
+// Illustrated storybook scenes: lightweight SVG artwork, no external image downloads.
+function renderStoryScene(page){
+ const fox=document.querySelector("#home .hero-fox .lili-vector");
+ const lili=fox?fox.outerHTML.replace('class="lili-vector"','class="lili-vector story-lili"'):"";
+ const themes=[
+ {sky:"#ffe8b8",ground:"#a9dc9b",sun:true,river:true,bruno:true,flower:true},
+ {sky:"#d7ebff",ground:"#a5d5a2",bridge:true,tracks:true,bruno:true},
+ {sky:"#d3edff",ground:"#9cdbad",bird:true,tree:true,bruno:true},
+ {sky:"#eadfff",ground:"#b5dfa0",owl:true,map:true,tree:true},
+ {sky:"#cceaff",ground:"#a6d9a2",bridge:true,turtle:true,bruno:true},
+ {sky:"#ffe5c9",ground:"#a4dca4",flower:true,turtle:true,bruno:true},
+ {sky:"#a6b9df",ground:"#82b69a",rain:true,tree:true,bruno:true},
+ {sky:"#cce7ff",ground:"#a9dda7",bridge:true,bruno:true,mother:true},
+ {sky:"#ffe3bd",ground:"#a6dda1",bruno:true,mother:true,bird:true,owl:true},
+ {sky:"#ffbc9d",ground:"#9ed69d",waterfall:true,bruno:true,mother:true,flower:true}
+ ];
+ const c=themes[page]||themes[0];
+ const tree=(x,y,k=1)=>`<g transform="translate(${x} ${y}) scale(${k})"><path d="M-9 10V-62H9V10" fill="#966d4d"/><circle cx="0" cy="-78" r="40" fill="#65b77d"/><circle cx="-28" cy="-67" r="26" fill="#75c789"/><circle cx="29" cy="-65" r="27" fill="#7ccc8a"/></g>`;
+ const deer=(x,y,k=1)=>`<g transform="translate(${x} ${y}) scale(${k})"><ellipse cx="0" cy="3" rx="37" ry="29" fill="#cb8e62"/><path d="M-25-14 -38-51 -20-45 -8-16M25-14 38-51 20-45 8-16" fill="#b87952"/><ellipse cx="-12" cy="0" rx="4" ry="5" fill="#392f45"/><ellipse cx="12" cy="0" rx="4" ry="5" fill="#392f45"/><ellipse cx="0" cy="15" rx="14" ry="10" fill="#f7ddbd"/><ellipse cx="0" cy="11" rx="5" ry="4" fill="#4e3740"/></g>`;
+ const flower=(x,y,col)=>`<g transform="translate(${x} ${y})"><path d="M0 0V-24" stroke="#488c5b" stroke-width="3"/><circle cy="-29" r="11" fill="${col}"/><circle cy="-29" r="5" fill="#ffe06b"/></g>`;
+ let objects=`<circle cx="500" cy="58" r="31" fill="${c.sun?"#ffe493":"#ffffff88"}"/><path d="M0 170Q150 98 320 165T640 160V350H0Z" fill="#c2e4b6"/><path d="M0 235Q140 175 310 220T640 220V350H0Z" fill="${c.ground}"/>`;
+ if(c.river||c.bridge||c.waterfall)objects+=`<path d="M0 282Q180 242 320 277T640 257V350H0Z" fill="#79cce4" stroke="#a8edfa" stroke-width="7"/>`;
+ if(c.bridge)objects+=`<path d="M215 245Q310 200 412 245L410 258Q310 218 218 258Z" fill="#b77e54" stroke="#8c654e" stroke-width="5"/><path d="M228 239V208M398 239V208M228 210Q312 170 398 210" stroke="#90694e" stroke-width="8" fill="none"/>`;
+ if(c.waterfall)objects+=`<path d="M480 122Q525 110 563 127V280Q527 303 480 280Z" fill="#88d7f3" stroke="#c3f4ff" stroke-width="7"/>`;
+ objects+=tree(68,257,1.05)+tree(589,254,.85);
+ if(c.tree)objects+=tree(465,230,.7);
+ if(c.flower)for(let j=0;j<9;j++)objects+=flower(35+j*72,305+(j%3)*8,j%2?"#f8a7c9":"#ffd45f");
+ if(c.tracks)objects+=`<g fill="#927255"><ellipse cx="272" cy="280" rx="9" ry="5"/><ellipse cx="301" cy="292" rx="9" ry="5"/><ellipse cx="330" cy="281" rx="9" ry="5"/></g>`;
+ if(c.rain)for(let j=0;j<24;j++)objects+=`<path d="M${j*28} 25l-9 18" stroke="#8fbde5" stroke-width="4" stroke-linecap="round"/>`;
+ if(c.map)objects+=`<g transform="translate(370 190) rotate(-9)"><rect width="105" height="74" rx="8" fill="#fff1c9" stroke="#c39e6c" stroke-width="5"/><path d="M12 52Q34 12 55 36T95 15" fill="none" stroke="#7bb28a" stroke-width="5" stroke-dasharray="7 5"/><circle cx="90" cy="16" r="7" fill="#f0837d"/></g>`;
+ if(c.bruno)objects+=deer(c.mother?415:426,236,.95);
+ if(c.mother)objects+=deer(520,221,1.15);
+ if(c.bird)objects+=`<g transform="translate(450 94)"><ellipse rx="23" ry="17" fill="#59b4e7"/><circle cx="-8" cy="-4" r="3" fill="#273e60"/><path d="M21-2l18 8-18 5Z" fill="#ffd45f"/><path d="M-15 9l-18 13" stroke="#428db9" stroke-width="7"/></g>`;
+ if(c.owl)objects+=`<g transform="translate(505 145)"><ellipse rx="32" ry="41" fill="#b58a75"/><circle cx="-13" cy="-10" r="14" fill="#fff4e1"/><circle cx="13" cy="-10" r="14" fill="#fff4e1"/><circle cx="-13" cy="-10" r="5" fill="#352e43"/><circle cx="13" cy="-10" r="5" fill="#352e43"/><path d="M-5 6 0 16 5 6Z" fill="#f4b957"/></g>`;
+ if(c.turtle)objects+=`<g transform="translate(475 283)"><ellipse rx="34" ry="20" fill="#619e6a"/><path d="M-31 2Q-24-34 8-26Q31-22 34 3Z" fill="#8ab776"/><circle cx="-35" cy="-1" r="13" fill="#9ccf8d"/><circle cx="-40" cy="-5" r="2" fill="#333"/></g>`;
+ const foxArt=lili?`<g transform="translate(133 163) scale(1.1)">${lili}</g>`:"";
+ const svg=`<svg class="story-illustration" viewBox="0 0 640 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${lang==="pt-PT"?"Ilustração da página ":"Story illustration for page "}${page+1}"><rect width="640" height="350" fill="${c.sky}"/><g class="story-landscape">${objects}</g>${foxArt}<g fill="#fff9" opacity=".75"><circle cx="150" cy="48" r="3"/><circle cx="270" cy="76" r="5"/><circle cx="355" cy="36" r="4"/></g></svg>`;
+ $("picture").innerHTML=svg;
+}
+
 function render(){
 selected=false;
 $("picture").classList.remove("correct-pop");
@@ -635,7 +679,7 @@ return;
 }
 const q=data[step];
 $("activityTitle").textContent=mode==="game"?t("games"):mode==="learn"?t("learnTitle"):t("stories");
-$("picture").textContent=q.pic;
+if(mode==="story")renderStoryScene(step);else $("picture").textContent=q.pic;
 $("content").textContent=lang==="pt-PT"?q.pt:q.en;
 currentSpeech=$("content").textContent;
 if(mode==="learn"){currentSpeech=$("content").textContent;currentClip="learn-"+step+"-question"}else if(mode==="game"){
